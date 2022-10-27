@@ -13,6 +13,10 @@ export class NavbarComponent implements OnInit {
   nurseIcon = faUserNurse;
   nurseIconSize: SizeProp = "3x";
 
+  isCurrentPath(path : string){
+    return this.router.url == path ? 'btn-light' : 'btn-link';
+  }
+
   /* Sign up variables */
   isSignUpOkButtonEnabled = false;
 
@@ -30,6 +34,10 @@ export class NavbarComponent implements OnInit {
   
   redirectToHome(){
     this.router.navigateByUrl('/home');
+  }
+
+  redirectToUsers(){
+    this.router.navigateByUrl('/users');
   }
 
   onSignUpFormChange($event: boolean) {

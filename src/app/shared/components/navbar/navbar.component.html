@@ -9,9 +9,12 @@
             <!-- Site title -->
             <h1 class="clickeable" (click)="redirectToHome()">Clinic</h1>
             <div class="vertical-line"></div>
-            <button style="text-decoration: none;" type="button" class="btn btn btn-light">Users</button>
-            <button style="text-decoration: none;" type="button" class="btn btn btn-link">Patients</button>
-            <button style="text-decoration: none;" type="button" class="btn btn btn-link">Calendar</button>
+            <button style="text-decoration: none;" type="button" class="btn" [ngClass]="isCurrentPath('/users')"
+                (click)="redirectToUsers()">Users</button>
+            <button style="text-decoration: none;" type="button" class="btn"
+                [ngClass]="isCurrentPath('/patients')">Patients</button>
+            <button style="text-decoration: none;" type="button" class="btn"
+                [ngClass]="isCurrentPath('/calendar')">Calendar</button>
         </div>
         <div style="margin:1rem;" fxLayout="row" fxLayoutAlign="end center">
             <!-- Action buttons -->

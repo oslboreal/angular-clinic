@@ -13,6 +13,9 @@ import { environment } from 'src/environments/environment';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { provideAuth,getAuth } from '@angular/fire/auth';
+import { AngularFireModule } from '@angular/fire/compat';
+import { Auth } from '@angular/fire/auth';
 
 /* Shared components  */
 import { TemplateComponent } from './shared/components/template/template.component';
@@ -28,6 +31,7 @@ import { AuthComponent } from './shared/services/auth/auth.component';
 import { DialogTemplateComponent } from './shared/services/dialog/components/dialog-template/dialog-template.component';
 import { DirectivesDirective } from './shared/services/dialog/directives.directive';
 import { DecimalPipe } from '@angular/common';
+import { UserService } from './shared/services/user/user.service';
 
 /* Services */
 
@@ -53,11 +57,13 @@ import { DecimalPipe } from '@angular/common';
     FlexLayoutModule,
     FontAwesomeModule,
     /* Firebase modules */
+    AngularFireModule.initializeApp(environment.firebaseConfig),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
     NgbModule,
   ],
-  providers: [DecimalPipe],
+  providers: [DecimalPipe, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
