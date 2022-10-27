@@ -1,0 +1,18 @@
+.wrapper {
+    width: 600px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .super-image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  
+  :host {
+    display: block;
+    text-align: center;
+    padding: 20px;
+  }
+  

@@ -7,13 +7,13 @@
                 [size]="nurseIconSize">
             </fa-icon>
             <!-- Site title -->
-            <h1 class="clickeable" (click)="redirectToHome()">Clinic</h1>
+            <h1 class="clickeable" (click)="redirectTo('/home')">Clinic</h1>
             <div class="vertical-line"></div>
             <button style="text-decoration: none;" type="button" class="btn" [ngClass]="isCurrentPath('/users')"
-                (click)="redirectToUsers()">Users</button>
-            <button style="text-decoration: none;" type="button" class="btn"
+                (click)="redirectTo('/users')">Users</button>
+            <button style="text-decoration: none;" type="button" class="btn" (click)="redirectTo('/patients')"
                 [ngClass]="isCurrentPath('/patients')">Patients</button>
-            <button style="text-decoration: none;" type="button" class="btn"
+            <button style="text-decoration: none;" type="button" class="btn" (click)="redirectTo('/calendar')"
                 [ngClass]="isCurrentPath('/calendar')">Calendar</button>
         </div>
         <div style="margin:1rem;" fxLayout="row" fxLayoutAlign="end center">

@@ -32,6 +32,7 @@ import { DialogTemplateComponent } from './shared/services/dialog/components/dia
 import { DirectivesDirective } from './shared/services/dialog/directives.directive';
 import { DecimalPipe } from '@angular/common';
 import { UserService } from './shared/services/user/user.service';
+import { UnderConstructionComponent } from './views/under-construction/under-construction.component';
 
 /* Services */
 
@@ -48,6 +49,7 @@ import { UserService } from './shared/services/user/user.service';
     AuthComponent,
     DialogTemplateComponent,
     DirectivesDirective,
+    UnderConstructionComponent,
   ],
   imports: [
     BrowserModule,

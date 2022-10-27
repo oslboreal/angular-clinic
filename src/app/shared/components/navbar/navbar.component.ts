@@ -32,8 +32,8 @@ export class NavbarComponent implements OnInit {
     this.router.navigateByUrl('/signup');
   }
   
-  redirectToHome(){
-    this.router.navigateByUrl('/home');
+  redirectTo(page : string){
+    this.router.navigateByUrl(page);
   }
 
   redirectToUsers(){
