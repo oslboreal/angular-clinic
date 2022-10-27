@@ -6,6 +6,21 @@
 /out-tsc
 /bazel-out
 /public
+public/3rdpartylicenses.txt
+public/favicon.ico
+public/index.html
+public/manifest.webmanifest
+public/polyfills.*.js
+public/runtime.*.js
+public/styles.*.css
+public/assets/icons/icon-72x72.png
+public/assets/icons/icon-96x96.png
+public/assets/icons/icon-128x128.png
+public/assets/icons/icon-144x144.png
+public/assets/icons/icon-152x152.png
+public/assets/icons/icon-192x192.png
+public/assets/icons/icon-384x384.png
+public/assets/icons/icon-512x512.png
 
 # Node
 /node_modules
@@ -41,3 +56,5 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+.gitignore
+.firebase/hosting.cHVibGlj.cache
