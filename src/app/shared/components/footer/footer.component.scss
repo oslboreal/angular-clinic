@@ -1,0 +1,39 @@
+footer {
+    height: -webkit-fill-available;
+}
+
+.nav-container {
+    background-color: #24252a;
+}
+
+h1 {
+    color: white;
+}
+
+fa-icon {
+    color: white;
+    margin-right: 1rem;
+}
+
+small {
+    color: white;
+}
+
+div.vertical-line {
+    width: 1px;
+    /* Line width */
+    background-color: rgb(255, 255, 255);
+    /* Line color */
+    height: 100%;
+    height: 3rem;
+    margin: 1rem;
+}
+
+.footer-container {
+    background-color: #24252a;
+    height: -webkit-fill-available;
+}
+
+#copyright-container {
+    margin-left: 1rem;
+}

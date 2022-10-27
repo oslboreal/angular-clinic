@@ -1,0 +1,36 @@
+<header style="height: -webkit-fill-available;">
+    <div class="nav-container" fxLayout="row" fxLayoutAlign="space-between center">
+        <!-- Site logo -->
+        <div id="logo" fxLayout="row" fxLayoutAlign="start center">
+            <!-- Site logo -->
+            <fa-icon class="clickeable" style="background-color: #B10F2E; padding: 1rem;" [icon]="nurseIcon"
+                [size]="nurseIconSize">
+            </fa-icon>
+            <!-- Site title -->
+            <h1 class="clickeable" (click)="redirectToHome()">Clinic</h1>
+            <div class="vertical-line"></div>
+            <button style="text-decoration: none;" type="button" class="btn btn btn-light">Users</button>
+            <button style="text-decoration: none;" type="button" class="btn btn btn-link">Patients</button>
+            <button style="text-decoration: none;" type="button" class="btn btn btn-link">Calendar</button>
+        </div>
+        <div style="margin:1rem;" fxLayout="row" fxLayoutAlign="end center">
+            <!-- Action buttons -->
+            <button type="button" class="btn btn-clinic-secondary" (click)="redirectToSignUp()">Sign Up</button>
+
+            <button style="margin-left: 1rem;" type="button" class="btn btn-clinic-secondary"
+                (click)="showLoginForm(loginForm)">Log In</button>
+
+            <ng-template #loginForm>
+                <app-dialog-template [title]="'Login'" [isOkButtonEnabled]="true">
+                    <app-login></app-login>
+                </app-dialog-template>
+            </ng-template>
+
+            <ng-template #signUp>
+                <app-dialog-template [title]="'Sign up'" [isOkButtonEnabled]="isSignUpOkButtonEnabled">
+                    <app-sing-up (isFormValid)="onSignUpFormChange($event)"></app-sing-up>
+                </app-dialog-template>
+            </ng-template>
+        </div>
+    </div>
+</header>

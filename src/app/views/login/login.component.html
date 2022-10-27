@@ -1,0 +1,29 @@
+<!-- Options -->
+<!-- User form -->
+<div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
+    <button class="btn btn-outlined" type="submit" (click)="onQuickAccess('patient', '1')">PATIENT 1</button>
+    <button class="btn btn-outlined" type="submit" (click)="onQuickAccess('patient', '2')">PATIENT 2</button>
+    <button class="btn btn-outlined" type="submit" (click)="onQuickAccess('patient', '3')">PATIENT 3</button>
+</div>
+
+<div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
+    <button class="btn btn-outlined" (click)="onQuickAccess('specialist', '1')" type="submit">SPECIALIST 1</button>
+    <button class="btn btn-outlined" (click)="onQuickAccess('specialist', '2')" type="submit">SECIALIST 2</button>
+</div>
+
+<div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
+    <button class="btn btn-outlined" (click)="onQuickAccess('admin', '')"  type="submit">ADMIN</button>
+</div>
+
+<div fxLAyout="row" fxLayoutAlign="center center" id="form-container">
+    <form [formGroup]="loginForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
+
+        <label for="email">Email</label>
+        <input type="email" name="email" class="form-control" formControlName="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" class="form-control" formControlName="password" required>
+
+        <!-- <br> -->
+    </form>
+</div>

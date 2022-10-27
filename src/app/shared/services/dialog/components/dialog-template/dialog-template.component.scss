@@ -1,0 +1,33 @@
+::ng-deep .modal {
+  border-radius: 0px;
+
+  .modal-dialog {
+    width: fit-content;
+  }
+}
+
+.modal-body {
+  height: 30rem;
+  max-height: 30rem;
+}
+
+.modal-footer {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  padding: 0.2rem;
+}
+
+.modal-header {
+  border-color: #24252a;
+  background-color: #24252a;
+  color: white;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+::ng-deep .modal-header .btn-close {
+  color: #fff !important;
+  opacity: 1;
+}
+
+// TODO : PLACE CSS HERE TO HAVE A DYNAMIC OR CONFIGURABLE MODAL DIALOG.

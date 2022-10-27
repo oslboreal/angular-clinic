@@ -1,0 +1,88 @@
+<!-- Options -->
+<div fxLAyout="column" fxLayoutAlign="center center" id="sign-up-container" [ngSwitch]="this.selectedCard">
+    <!-- Cards -->
+    <div id="cards-container" fxLAyout="row" fxLayoutAlign="center center" *ngSwitchCase="''">
+        <div class="card" (click)="onCardSelected('patient')">
+            <div class="card-header">
+                <fa-icon [icon]="userIcon" [size]="iconSize">
+                </fa-icon>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-dark">Sign up as a Patient</button>
+            </div>
+        </div>
+        <div class="card" (click)="onCardSelected('specialist')">
+            <div class="card-header">
+                <fa-icon [icon]="doctorIcon" [size]="iconSize">
+                </fa-icon>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-dark">Sign up as a Specialist</button>
+            </div>
+        </div>
+    </div>
+    <!-- Cards end -->
+
+    <!-- User form -->
+    <form *ngIf="this.selectedCard != ''" [formGroup]="userForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
+        <div class="form-group" fxLayout="column" fxLayoutAlign="space-between start">
+            <label for="firstName">First name</label>
+            <input type="text" name="firstName" class="form-control" formControlName="firstName" required>
+
+            <label for="lastName">Last name</label>
+            <input type="text" name="lastName" class="form-control" formControlName="lastName" required>
+
+            <label for="nationalIdentification">DNI</label>
+            <input type="text" name="nationalIdentification" class="form-control"
+                formControlName="nationalIdentification" required>
+
+            <label *ngIf="selectedCard == 'specialist'" for="speciality">Speciality</label>
+            <div *ngIf="selectedCard == 'specialist'" fxLAyout="row" style="width: 100%" fxLayoutAlign="center strech">
+                <select class="form-select" id="speciality" name="speciality" formControlName="speciality"
+                    aria-label="Speciality">
+                    <option selected></option>
+                    <option value="1">Dentist</option>
+                    <option value="2">Kinesiologist</option>
+                    <option value="3">Clinician</option>
+                </select>
+
+                <button class="btn btn-clinic-secondary m-1" (click)="addCustomSpecialitySlot()">+</button>
+            </div>
+
+            <div id="extraSpecialties" formArrayName="extraSpecialities">
+                <div *ngFor="let extraSpeciality of extraSpecialities.controls; let i=index">
+                    <div class="form-group">
+                        <label *ngIf="i != 0" for="speciality{{i}}">Custom speciality</label>
+                        <input *ngIf="i != 0" type="text" name="speciality{{i}}" class="form-control"
+                            formControlName="i" required>
+                    </div>
+                </div>
+            </div>
+
+            <label *ngIf="selectedCard == 'patient'" for="healthInsurance">Health insurance</label>
+            <input *ngIf="selectedCard == 'patient'" type="text" name="healthInsurance" class="form-control"
+                formControlName="healthInsurance" required>
+
+
+            <label for="age">Age</label>
+            <input type="number" name="age" class="form-control" formControlName="age" required>
+
+            <label for="firstImage">First image</label>
+            <input type="file" name="firstImage" class="form-control" formControlName="firstImage" required>
+
+            <label for="secondImage">Second image</label>
+            <input type="file" name="secondImage" class="form-control" formControlName="secondImage" required>
+
+            <label for="email">Email</label>
+            <input type="email" name="email" class="form-control" formControlName="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" class="form-control" formControlName="password" required>
+
+            <input type="text" name="role" class="form-control" formControlName="role" [value]="this.selectedCard"
+                hidden>
+            <br>
+            <button class="btn btn-clinic-secondary" type="submit" [disabled]="!userForm.valid">Submit</button>
+        </div>
+    </form>
+</div>

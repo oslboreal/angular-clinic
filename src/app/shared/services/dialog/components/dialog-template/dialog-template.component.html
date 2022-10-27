@@ -1,0 +1,11 @@
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{this.title}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="onCrossMarkPressed()"></button>
+</div>
+<div class="modal-body">
+    <ng-content></ng-content>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="onCancelButtonPressed()">CANCEL</button>
+    <button type="button" class="btn btn-clinic-secondary" [disabled]="!isOkButtonEnabled" (click)="onOkButtonPressed()">OK</button>
+</div>

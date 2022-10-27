@@ -1,0 +1,41 @@
+<div id="users-container">
+    <div id="users-search-container">
+        <h1>Search user:</h1>
+        <form>
+            <input id="search-input" class="form-control" type="text" [formControl]="filter" />
+        </form>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Fullname</th>
+                <th scope="col">Age</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users$ | async; index as i">
+                <th scope="row">{{ i + 1 }}</th>
+                <td>
+                    <ngb-highlight [result]="user.name + ' ' + user.surname" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.age | number" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.email" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.role" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <button class="btn btn-primary action-btn">Edit</button>
+                    <button class="btn btn-primary action-btn">X</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

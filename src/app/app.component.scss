@@ -1,0 +1,28 @@
+ ::ng-deep {
+    .btn-clinic-secondary {
+       background-color: #B10F2E;
+       border-color: #B10F2E;
+       color: white;
+    }
+
+    .btn-clinic-secondary:disabled {
+       background-color: #9b2b3f;
+       border-color: #B10F2E;
+       color: rgb(204, 204, 204);
+    }
+
+    .btn-clinic-secondary:hover {
+       background-color: #8b041d;
+       color: white;
+    }
+
+    .btn-clinic-secondary:active:after {
+       background-color: #8b041d;
+       color: white;
+    }
+
+    .btn-clinic-secondary:after {
+       background-color: #8b041d;
+       color: white;
+    }
+ }
