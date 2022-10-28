@@ -14,32 +14,46 @@ import {
 } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { forkJoin, from, Observable } from 'rxjs';
+import { finalize, forkJoin, from, Observable } from 'rxjs';
 import { DocumentReference } from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth) { }
+  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient) { }
 
   getUsers(): Observable<User[]> {
     console.log('Get users');
     return this.firestore.collection<User>('users').valueChanges();
   }
-
+  downloadURL: Observable<string> = new Observable<string>();
+  fb: any;
   createUser(user: User) {
     const firstFile = user.firstImage;
-    const reader = new FileReader();
-    // TODO : FIX IMAGE UPLOAD.
-    reader.onload = () => {
-        console.log(reader.result);
-    };
-    
     const secondFile = user.secondImage;
 
-    return from(this.firestore.collection<User>('users').add(user));
+    var n = Date.now();
+    const file = user.firstImage;
+    const filePath = `UserImages/${n}`;
+    const fileRef = this.storage.ref(filePath);
+    const task = this.storage.upload(`UserImages/${n}`, file);
+
+    return task.snapshotChanges()
+      .pipe(
+        finalize(() => {
+          this.downloadURL = fileRef.getDownloadURL();
+          this.downloadURL.subscribe(url => {
+            if (url)
+              this.fb = url;
+            user.firstImage = this.fb;
+            user.secondImage = this.fb;
+            return from(this.firestore.collection<User>('users').add(user));
+          })
+        })
+      );
   }
 
   loginUser(email: string, password: string) {

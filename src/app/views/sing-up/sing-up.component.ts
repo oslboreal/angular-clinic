@@ -23,6 +23,9 @@ export class SingUpComponent implements OnInit, OnDestroy {
   iconSize: SizeProp = "8x";
   selectedCard: string = '';
 
+  firstImageBlob: any;
+  secondImageBlob: any;
+
   /* Form  */
   userForm = this.formBuilder.group({
     name: ['', Validators.required],
@@ -49,6 +52,7 @@ export class SingUpComponent implements OnInit, OnDestroy {
       this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
       this.userForm.controls.role.setValue(this.selectedCard);
       this.userForm.valueChanges.subscribe((result) => {
+        console.log(this.userForm.controls.firstImage);
       })
     } catch (error) {
 
@@ -56,11 +60,16 @@ export class SingUpComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
+    console.log(this.userForm.value);
+
+
     if (!this.userForm.valid) {
       this.toastr.error('You are trying to send invalid data, please refresh the site.');
     } else {
       let user: User = this.userForm.value as User;
       user.role = this.selectedCard;
+      user.firstImage = this.firstImageBlob;
+      user.secondImage = this.secondImageBlob;
       this.userService.createUser(user).subscribe(
         () => { },
         () => { this.toastr.error('Error connecting to the data store, please try again.'); },
@@ -72,6 +81,20 @@ export class SingUpComponent implements OnInit, OnDestroy {
   addCustomSpecialitySlot() {
     let formArray = this.userForm.get('extraSpecialities') as FormArray
     formArray.push(new FormControl(''))
+  }
+
+  onFileSelected(event: any, imageNumber: number) {
+    var n = Date.now();
+    const file = event.target.files[0];
+
+    switch (imageNumber) {
+      case 1:
+        this.firstImageBlob = file;
+        break;
+      case 2:
+        this.secondImageBlob = file;
+        break;
+    }
   }
 
   ngOnDestroy(): void {

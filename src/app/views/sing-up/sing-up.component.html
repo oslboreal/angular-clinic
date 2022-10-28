@@ -68,10 +68,12 @@
             <input type="number" name="age" class="form-control" formControlName="age">
 
             <label for="firstImage">First image</label>
-            <input type="file" name="firstImage" class="form-control" formControlName="firstImage">
+            <input type="file" name="firstImage" (change)="onFileSelected($event, 1)" class="form-control"
+                formControlName="firstImage">
 
             <label for="secondImage">Second image</label>
-            <input type="file" name="secondImage" class="form-control" formControlName="secondImage">
+            <input type="file" name="secondImage" (change)="onFileSelected($event,2)" class="form-control"
+                formControlName="secondImage">
 
             <label for="email">Email</label>
             <input type="email" name="email" class="form-control" formControlName="email">

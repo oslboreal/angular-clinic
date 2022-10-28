@@ -36,6 +36,7 @@ import { DirectivesDirective } from './shared/services/dialog/directives.directi
 import { DecimalPipe } from '@angular/common';
 import { UserService } from './shared/services/user/user.service';
 import { UnderConstructionComponent } from './views/under-construction/under-construction.component';
+import { HttpClientModule } from '@angular/common/http';
 
 /* Services */
 
@@ -58,6 +59,7 @@ import { UnderConstructionComponent } from './views/under-construction/under-con
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    HttpClientModule,
     /* Styling modules */
     ToastrModule.forRoot(),
     FlexLayoutModule,
@@ -71,7 +73,7 @@ import { UnderConstructionComponent } from './views/under-construction/under-con
     provideAuth(() => getAuth()),
     NgbModule,
   ],
-  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'images' }],
+  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
