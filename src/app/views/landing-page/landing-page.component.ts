@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { faUserNurse, faHeartPulse, faUserDoctor, faUserGear } from '@fortawesome/free-solid-svg-icons';
+import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'app-landing-page',
@@ -6,8 +8,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./landing-page.component.scss']
 })
 export class LandingPageComponent implements OnInit {
+  nurseIcon = faUserNurse;
+  doctorIcon = faUserDoctor;
+  heartIcon = faHeartPulse;
+  userGearIcon = faUserGear;
+  iconSize: SizeProp = "8x";
 
-  images = [944, 1011, 984].map((n) => `https://picsum.photos/id/${n}/900/500`);
   constructor() { }
 
   ngOnInit(): void {

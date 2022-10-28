@@ -4,6 +4,7 @@ export interface User {
     email: string;
     age: number;
     role: string;
+    enabled: boolean;
     nationalIdentification: string;
 }
 
