@@ -98,6 +98,7 @@ export class SingUpComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    console.log('Sign up destroyed');
     this.dialogService.actionTaken.unsubscribe();
   }
 
@@ -108,9 +109,9 @@ export class SingUpComponent implements OnInit, OnDestroy {
 
   onModalActionTaken(action: DialogEventType | undefined) {
     /* Submit action sent */
-    if (action == DialogEventType.ok) {
-      alert('Content saved');
-    }
+    // if (action == DialogEventType.ok) {
+    //   alert('Content saved');
+    // }
   }
 
   requiredFor(cardType: string): ValidatorFn {

@@ -14,26 +14,35 @@ import {
 } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { finalize, forkJoin, from, Observable } from 'rxjs';
-import { DocumentReference } from '@angular/fire/firestore';
+import { finalize, forkJoin, from, Observable, of } from 'rxjs';
+import { DocumentReference, query, where } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { splitNsName } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-
-  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient) { }
+  userData: any;
+  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient, private toastr: ToastrService) {
+    this.firebaseAuth.authState.subscribe((user) => {
+      if (user) {
+        this.userData = user;
+        localStorage.setItem('user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('user');
+      }
+    });
+  }
 
   getUsers(): Observable<User[]> {
     console.log('Get users');
     return this.firestore.collection<User>('users').valueChanges();
   }
-  downloadURL: Observable<string> = new Observable<string>();
-  fb: any;
   createUser(user: User) {
-    const firstFile = user.firstImage;
-    const secondFile = user.secondImage;
+    /* User disabled by default */
+    user.enabled = false;
 
     var n = Date.now();
     const file = user.firstImage;
@@ -44,27 +53,42 @@ export class UserService {
     return task.snapshotChanges()
       .pipe(
         finalize(() => {
-          this.downloadURL = fileRef.getDownloadURL();
-          this.downloadURL.subscribe(url => {
-            if (url)
-              this.fb = url;
-            user.firstImage = this.fb;
-            user.secondImage = this.fb;
-            return from(this.firestore.collection<User>('users').add(user));
-          })
+          fileRef.getDownloadURL()
+            .subscribe(url => {
+              if (url)
+                user.firstImage = url;
+              user.secondImage = url;
+
+              this.firebaseAuth.createUserWithEmailAndPassword(user.email, user.password)
+                .then(credential => {
+                  credential.user?.updateProfile({ displayName: user.name, photoURL: user.firstImage })
+                })
+              return from(this.firestore.collection<User>('users').add(user));
+            })
         })
       );
   }
 
+  isLogin = false;
+  roleAs: string = '';
   loginUser(email: string, password: string) {
-    return signInWithEmailAndPassword(this.auth, email, password)
-      .then((result) => {
-        // this.SetUserData(result.user);
-        // this.isLogin = true;
-        // this.roleAs = this.userData.role;
-        // localStorage.setItem('STATE', 'true');
-        // localStorage.setItem('ROLE', this.roleAs)
-        // return of({ success: this.isLogin, role: this.roleAs });
+    return from(signInWithEmailAndPassword(this.auth, email, password))
+      .subscribe((result) => {
+        this.userData = result.user;
+
+        var ref = this.firestore.collection<User>('users').ref;
+        ref.where("email", "==", this.userData.email).get().then(snapshot => {
+          if (snapshot.empty) {
+            this.toastr.error('User not found');
+          } else {
+            snapshot.forEach(doc => {
+              this.roleAs = doc.get('role');
+              localStorage.setItem('role', this.roleAs)
+            });
+          }
+        });
+
+        return of({ success: this.isLogin, role: this.roleAs });
       })
   }
 }

@@ -2,6 +2,7 @@ export interface User {
     name: string;
     surname: string;
     email: string;
+    password: string;
     age: number;
     role: string;
     enabled: boolean;
@@ -11,4 +12,5 @@ export interface User {
     extraSpecialities: string[];
     firstImage: string;
     secondImage: string;
+    emailVerified: boolean;
 }
