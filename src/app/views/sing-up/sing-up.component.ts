@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { faUser, faUserDoctor } from '@fortawesome/free-solid-svg-icons';
-import { FormGroup, FormControl, FormArray, FormArrayName } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, FormArrayName, Validators, AbstractControl, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import { FormBuilder } from '@angular/forms';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
@@ -21,15 +21,15 @@ export class SingUpComponent implements OnInit, OnDestroy {
 
   /* Form  */
   userForm = this.formBuilder.group({
-    firstName: [''],
-    lastName: [''],
-    age: [''],
-    nationalIdentification: [''],
-    healthInsurance: [''],
-    email: [''],
-    firstImage: [''],
-    secondImage: [''],
-    password: [''],
+    firstName: ['', Validators.required],
+    lastName: ['', Validators.required],
+    age: ['', [Validators.required, Validators.min(0)]],
+    nationalIdentification: ['', Validators.required],
+    healthInsurance: ['', this.requiredFor('patient')],
+    email: ['', Validators.email],
+    firstImage: ['', Validators.required],
+    secondImage: ['', Validators.required],
+    password: ['', Validators.required],
     role: [''],
     speciality: [''],
     extraSpecialities: this.formBuilder.array([])
@@ -42,6 +42,11 @@ export class SingUpComponent implements OnInit, OnDestroy {
   constructor(private formBuilder: FormBuilder, private dialogService: DialogService) {
     try {
       this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
+      this.userForm.controls.role.setValue(this.selectedCard);
+      this.userForm.valueChanges.subscribe((result) => {
+        console.log(result);
+        console.log(this.userForm.errors);
+      })
     } catch (error) {
 
     }
@@ -70,6 +75,21 @@ export class SingUpComponent implements OnInit, OnDestroy {
     if (action == DialogEventType.ok) {
       alert('Content saved');
     }
+  }
+
+  requiredFor(cardType: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      let isOk = true;
+
+      if (this.selectedCard != cardType) {
+        return null;
+      } else if (this.selectedCard == cardType && control.value != '') {
+        return null;
+      }
+
+      /* Error found */
+      return { requiredFor: { value: control.value } };
+    };
   }
 
   ngOnInit(): void {
