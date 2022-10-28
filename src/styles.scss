@@ -3,6 +3,9 @@
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
 
+// regular style toast
+@import '~ngx-toastr/toastr';
+
 html,
 body {
     height: 100%;
@@ -50,6 +53,6 @@ body {
     background: #777777;
 }
 
-.clickeable{
+.clickeable {
     cursor: pointer;
 }

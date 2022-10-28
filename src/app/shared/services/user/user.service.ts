@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Patient, Specialist, User } from './user';
+import { User } from './user';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
@@ -13,22 +13,33 @@ import {
   signOut,
 } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { Observable } from 'rxjs';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { forkJoin, from, Observable } from 'rxjs';
+import { DocumentReference } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private auth: Auth, private frestore: AngularFirestore, private firebaseAuth: AngularFireAuth) { }
+  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth) { }
 
-  getUsers() : Observable<User[]> {
+  getUsers(): Observable<User[]> {
     console.log('Get users');
-    return this.frestore.collection<User>('users').valueChanges();
+    return this.firestore.collection<User>('users').valueChanges();
   }
 
-  createUser(user: User | Patient | Specialist) {
+  createUser(user: User) {
+    const firstFile = user.firstImage;
+    const reader = new FileReader();
+    // TODO : FIX IMAGE UPLOAD.
+    reader.onload = () => {
+        console.log(reader.result);
+    };
+    
+    const secondFile = user.secondImage;
 
+    return from(this.firestore.collection<User>('users').add(user));
   }
 
   loginUser(email: string, password: string) {

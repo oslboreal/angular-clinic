@@ -26,11 +26,11 @@
     <!-- User form -->
     <form *ngIf="this.selectedCard != ''" [formGroup]="userForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
         <div class="form-group" fxLayout="column" fxLayoutAlign="space-between start">
-            <label for="firstName">First name</label>
-            <input type="text" name="firstName" class="form-control" formControlName="firstName">
+            <label for="name">First name</label>
+            <input type="text" name="name" class="form-control" formControlName="name">
 
-            <label for="lastName">Last name</label>
-            <input type="text" name="lastName" class="form-control" formControlName="lastName">
+            <label for="surname">Last name</label>
+            <input type="text" name="surname" class="form-control" formControlName="surname">
 
             <label for="nationalIdentification">DNI</label>
             <input type="text" name="nationalIdentification" class="form-control"
@@ -83,7 +83,6 @@
                 hidden>
             <br>
             <button class="btn btn-clinic-secondary" type="submit" [disabled]="!userForm.valid">Submit</button>
-            <p>{{this.userForm.valid}}</p>
         </div>
     </form>
 </div>

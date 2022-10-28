@@ -7,15 +7,18 @@ import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 /* Firebase dependencies */
 import { environment } from 'src/environments/environment';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { provideAuth,getAuth } from '@angular/fire/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 import { AngularFireModule } from '@angular/fire/compat';
-import { Auth } from '@angular/fire/auth';
+import { AngularFireStorageModule, BUCKET } from '@angular/fire/compat/storage';
 
 /* Shared components  */
 import { TemplateComponent } from './shared/components/template/template.component';
@@ -56,16 +59,19 @@ import { UnderConstructionComponent } from './views/under-construction/under-con
     AppRoutingModule,
     ReactiveFormsModule,
     /* Styling modules */
+    ToastrModule.forRoot(),
     FlexLayoutModule,
+    BrowserAnimationsModule,
     FontAwesomeModule,
     /* Firebase modules */
     AngularFireModule.initializeApp(environment.firebaseConfig),
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore()),
+    AngularFireStorageModule,
     provideAuth(() => getAuth()),
     NgbModule,
   ],
-  providers: [DecimalPipe, UserService],
+  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'images' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

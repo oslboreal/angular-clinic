@@ -6,13 +6,9 @@ export interface User {
     role: string;
     enabled: boolean;
     nationalIdentification: string;
-}
-
-export interface Patient extends User {
     healthInsurance: string;
-}
-
-export interface Specialist extends User {
     speciality: string;
     extraSpecialities: string[];
+    firstImage: string;
+    secondImage: string;
 }

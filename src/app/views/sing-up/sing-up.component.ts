@@ -4,6 +4,10 @@ import { FormGroup, FormControl, FormArray, FormArrayName, Validators, AbstractC
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import { FormBuilder } from '@angular/forms';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
+import { ToastrService } from 'ngx-toastr';
+import { UserService } from 'src/app/shared/services/user/user.service';
+import { from } from 'rxjs';
+import { User } from 'src/app/shared/services/user/user';
 
 @Component({
   selector: 'app-sing-up',
@@ -21,9 +25,9 @@ export class SingUpComponent implements OnInit, OnDestroy {
 
   /* Form  */
   userForm = this.formBuilder.group({
-    firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    age: ['', [Validators.required, Validators.min(0)]],
+    name: ['', Validators.required],
+    surname: ['', Validators.required],
+    age: [0, [Validators.required, Validators.min(0)]],
     nationalIdentification: ['', Validators.required],
     healthInsurance: ['', this.requiredFor('patient')],
     email: ['', Validators.email],
@@ -31,7 +35,8 @@ export class SingUpComponent implements OnInit, OnDestroy {
     secondImage: ['', Validators.required],
     password: ['', Validators.required],
     role: [''],
-    speciality: [''],
+    enabled: [false],
+    speciality: ['', this.requiredFor('specialist')],
     extraSpecialities: this.formBuilder.array([])
   });
 
@@ -39,13 +44,11 @@ export class SingUpComponent implements OnInit, OnDestroy {
     return this.userForm.get('extraSpecialities') as FormArray;
   }
 
-  constructor(private formBuilder: FormBuilder, private dialogService: DialogService) {
+  constructor(private formBuilder: FormBuilder, private dialogService: DialogService, private toastr: ToastrService, private userService: UserService) {
     try {
       this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
       this.userForm.controls.role.setValue(this.selectedCard);
       this.userForm.valueChanges.subscribe((result) => {
-        console.log(result);
-        console.log(this.userForm.errors);
       })
     } catch (error) {
 
@@ -53,7 +56,17 @@ export class SingUpComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.warn(this.userForm.value);
+    if (!this.userForm.valid) {
+      this.toastr.error('You are trying to send invalid data, please refresh the site.');
+    } else {
+      let user: User = this.userForm.value as User;
+      user.role = this.selectedCard;
+      this.userService.createUser(user).subscribe(
+        () => { },
+        () => { this.toastr.error('Error connecting to the data store, please try again.'); },
+        () => { this.toastr.success('Signed up successfully, redirecting...'); }
+      )
+    }
   }
 
   addCustomSpecialitySlot() {
