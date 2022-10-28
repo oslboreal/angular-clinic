@@ -11,10 +11,11 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  user,
 } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { finalize, forkJoin, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, finalize, forkJoin, from, Observable, of } from 'rxjs';
 import { DocumentReference, query, where } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -25,12 +26,16 @@ import { splitNsName } from '@angular/compiler';
 })
 export class UserService {
   userData: any;
+  isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject(false);
+
   constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient, private toastr: ToastrService) {
     this.firebaseAuth.authState.subscribe((user) => {
       if (user) {
         this.userData = user;
+        this.isLoggedIn.next(true);
         localStorage.setItem('user', JSON.stringify(user));
       } else {
+        this.isLoggedIn.next(false);
         localStorage.removeItem('user');
       }
     });
@@ -83,13 +88,19 @@ export class UserService {
           } else {
             snapshot.forEach(doc => {
               this.roleAs = doc.get('role');
-              localStorage.setItem('role', this.roleAs)
+              let name = doc.get('name');
+              localStorage.setItem('role', this.roleAs);
+              this.toastr.success('Welcome ' + name);
             });
           }
         });
 
         return of({ success: this.isLogin, role: this.roleAs });
       })
+  }
+
+  logout() {
+    this.firebaseAuth.signOut();
   }
 
   enableUser(email: string) {

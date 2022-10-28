@@ -29,13 +29,27 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    if (!this.loginForm.controls.email)
+    let valid = true;
+    if (!this.loginForm.controls.email) {
+      valid = false;
       this.toastr.error('Invalid email address.');
+    }
 
-    if (!this.loginForm.controls.password)
+    if (!this.loginForm.controls.password) {
+      valid = false;
       this.toastr.error('Invalid password.');
+    }
 
-    this.userService.loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '');
+    let isEmailVerified = true;
+    if (!isEmailVerified) {
+      valid = false
+      this.toastr.error(`The specified user's email was not verified.`);
+    }
+
+    if (valid)
+    {
+      this.userService.loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '');
+    }
   }
 
   onQuickAccess(role: string, id: string) {

@@ -20,8 +20,11 @@
             <!-- Action buttons -->
             <button type="button" class="btn btn-clinic-secondary" (click)="redirectToSignUp()">Sign Up</button>
 
-            <button style="margin-left: 1rem;" type="button" class="btn btn-clinic-secondary"
-                (click)="showLoginForm(loginForm)">Log In</button>
+            <button *ngIf="!(isUserLogged$ | async)" style="margin-left: 1rem;" type="button"
+                class="btn btn-clinic-secondary" (click)="showLoginForm(loginForm)">Log In</button>
+
+            <button *ngIf="isUserLogged$ | async" style="margin-left: 1rem;" type="button"
+                class="btn btn-clinic-secondary" (click)="logOut()">Log out</button>
 
             <ng-template #loginForm>
                 <app-dialog-template [title]="'Login'" [isOkButtonEnabled]="true">

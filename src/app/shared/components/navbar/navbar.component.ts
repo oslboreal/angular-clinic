@@ -4,6 +4,8 @@ import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import { DialogEventType, DialogService } from '../../services/dialog/dialog.service';
 import { LoginComponent } from 'src/app/views/login/login.component';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user/user.service';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -13,30 +15,34 @@ export class NavbarComponent implements OnInit {
   nurseIcon = faUserNurse;
   nurseIconSize: SizeProp = "3x";
 
-  isCurrentPath(path : string){
+  isCurrentPath(path: string) {
     return this.router.url == path ? 'btn-light' : 'btn-link';
   }
+
+  isUserLogged$: Observable<boolean>;
 
   /* Sign up variables */
   isSignUpOkButtonEnabled = false;
 
-  constructor(private dialogService: DialogService, private router : Router) {
+  constructor(private dialogService: DialogService, private router: Router, private userService: UserService) {
     this.dialogService.actionTaken.subscribe((result) => {
       if (result == DialogEventType.cancel || result == DialogEventType.crossClick || result == DialogEventType.close) {
         this.isSignUpOkButtonEnabled = false;
       }
     })
+
+    this.isUserLogged$ = this.userService.isLoggedIn.asObservable();
   }
 
-  redirectToSignUp(){
+  redirectToSignUp() {
     this.router.navigateByUrl('/signup');
   }
-  
-  redirectTo(page : string){
+
+  redirectTo(page: string) {
     this.router.navigateByUrl(page);
   }
 
-  redirectToUsers(){
+  redirectToUsers() {
     this.router.navigateByUrl('/users');
   }
 
@@ -47,6 +53,12 @@ export class NavbarComponent implements OnInit {
 
   showLoginForm(content: TemplateRef<LoginComponent>) {
     this.dialogService.setDialog(DialogEventType.open, content);
+  }
+
+  logOut() {
+    this.userService.logout();
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
   }
 
   ngOnInit(): void {
