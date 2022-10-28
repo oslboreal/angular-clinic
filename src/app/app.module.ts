@@ -37,6 +37,7 @@ import { DecimalPipe } from '@angular/common';
 import { UserService } from './shared/services/user/user.service';
 import { UnderConstructionComponent } from './views/under-construction/under-construction.component';
 import { HttpClientModule } from '@angular/common/http';
+import { LoggingService } from './shared/services/logging/logging.service';
 
 /* Services */
 
@@ -73,7 +74,7 @@ import { HttpClientModule } from '@angular/common/http';
     provideAuth(() => getAuth()),
     NgbModule,
   ],
-  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }],
+  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }, LoggingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

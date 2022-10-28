@@ -38,7 +38,7 @@ export class UserService {
 
   getUsers(): Observable<User[]> {
     console.log('Get users');
-    return this.firestore.collection<User>('users').valueChanges();
+    return this.firestore.collection<User>('users').valueChanges()
   }
   createUser(user: User) {
     /* User disabled by default */
@@ -90,5 +90,25 @@ export class UserService {
 
         return of({ success: this.isLogin, role: this.roleAs });
       })
+  }
+
+  enableUser(email: string) {
+    let record$ = from(this.firestore.collection('users').ref.where('email', '==', email).get());
+    record$.subscribe(result => {
+      result.forEach(user => {
+        let userRef = this.firestore.collection('users').doc(user.id);
+        return userRef.update({ enabled: true });
+      });
+    });
+  }
+
+  disableUser(email: string) {
+    let record$ = from(this.firestore.collection('users').ref.where('email', '==', email).get());
+    record$.subscribe(result => {
+      result.forEach(user => {
+        let userRef = this.firestore.collection('users').doc(user.id);
+        return userRef.update({ enabled: false });
+      });
+    });
   }
 }

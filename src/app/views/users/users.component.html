@@ -32,8 +32,11 @@
                     <ngb-highlight [result]="user.role" [term]="filter.value"></ngb-highlight>
                 </td>
                 <td>
-                    <button *ngIf="!user.enabled" class="btn btn-success action-btn">Habilitar</button>
-                    <button *ngIf="user.enabled" class="btn btn-danger action-btn">Deshabilitar</button>
+                    <button *ngIf="!user.enabled" (click)="enableUser(user.email)"
+                        class="btn btn-success action-btn">Habilitar</button>
+                        
+                    <button *ngIf="user.enabled" (click)="disableUser(user.email)"
+                        class="btn btn-danger action-btn">Deshabilitar</button>
                 </td>
             </tr>
         </tbody>
