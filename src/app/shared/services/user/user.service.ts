@@ -7,6 +7,7 @@ import {
 } from '@angular/fire/compat/firestore';
 import {
   Auth,
+  getAuth,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -20,6 +21,8 @@ import { DocumentReference, query, where } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { splitNsName } from '@angular/compiler';
+import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -27,12 +30,16 @@ import { splitNsName } from '@angular/compiler';
 export class UserService {
   userData: any;
   isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  roleAs: BehaviorSubject<string> = new BehaviorSubject('');
+  verified: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
-  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient, private toastr: ToastrService) {
+  constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient, private toastr: ToastrService, private router: Router) {
     this.firebaseAuth.authState.subscribe((user) => {
       if (user) {
         this.userData = user;
         this.isLoggedIn.next(true);
+        this.verified.next(user.emailVerified)
+        this.roleAs.next(localStorage.getItem('role') ?? '')
         localStorage.setItem('user', JSON.stringify(user));
       } else {
         this.isLoggedIn.next(false);
@@ -45,6 +52,24 @@ export class UserService {
     console.log('Get users');
     return this.firestore.collection<User>('users').valueChanges()
   }
+
+  actionCodeSettings = {
+    // URL you want to redirect back to. The domain (www.example.com) for this
+    // URL must be in the authorized domains list in the Firebase Console.
+    url: environment.production ? 'https://vallejo-entrega.web.app/activate/' : 'http://localhost/activate/',
+    // This must be true.
+    handleCodeInApp: true,
+    iOS: {
+      bundleId: 'com.example.ios'
+    },
+    android: {
+      packageName: 'com.example.android',
+      installApp: true,
+      minimumVersion: '12'
+    },
+    dynamicLinkDomain: 'example.page.link'
+  };
+
   createUser(user: User) {
     /* User disabled by default */
     user.enabled = false;
@@ -67,6 +92,7 @@ export class UserService {
               this.firebaseAuth.createUserWithEmailAndPassword(user.email, user.password)
                 .then(credential => {
                   credential.user?.updateProfile({ displayName: user.name, photoURL: user.firstImage })
+                  credential.user?.sendEmailVerification().then(() => this.router.navigateByUrl('/email-sent'));
                 })
               return from(this.firestore.collection<User>('users').add(user));
             })
@@ -74,12 +100,13 @@ export class UserService {
       );
   }
 
-  isLogin = false;
-  roleAs: string = '';
   loginUser(email: string, password: string) {
     return from(signInWithEmailAndPassword(this.auth, email, password))
       .subscribe((result) => {
         this.userData = result.user;
+
+        /* Set a field indicating whether the user is verified or not */
+        this.verified.next(result.user.emailVerified);
 
         var ref = this.firestore.collection<User>('users').ref;
         ref.where("email", "==", this.userData.email).get().then(snapshot => {
@@ -87,20 +114,26 @@ export class UserService {
             this.toastr.error('User not found');
           } else {
             snapshot.forEach(doc => {
-              this.roleAs = doc.get('role');
+              this.roleAs.next(doc.get('role'));
               let name = doc.get('name');
-              localStorage.setItem('role', this.roleAs);
+              localStorage.setItem('role', doc.get('role'));
               this.toastr.success('Welcome ' + name);
             });
           }
         });
 
-        return of({ success: this.isLogin, role: this.roleAs });
-      })
+        return of({ success: this.isLoggedIn, role: this.roleAs });
+      },
+        (error) => {
+          this.toastr.error('Invalid credentials, please try again.');
+        })
   }
 
   logout() {
     this.firebaseAuth.signOut();
+    this.roleAs.next('')
+    this.verified.next(false)
+    this.isLoggedIn.next(false)
   }
 
   enableUser(email: string) {

@@ -38,6 +38,7 @@ import { UserService } from './shared/services/user/user.service';
 import { UnderConstructionComponent } from './views/under-construction/under-construction.component';
 import { HttpClientModule } from '@angular/common/http';
 import { LoggingService } from './shared/services/logging/logging.service';
+import { VerificationEmailSentComponent } from './views/verification-email-sent/verification-email-sent.component';
 
 /* Services */
 
@@ -55,6 +56,7 @@ import { LoggingService } from './shared/services/logging/logging.service';
     DialogTemplateComponent,
     DirectivesDirective,
     UnderConstructionComponent,
+    VerificationEmailSentComponent,
   ],
   imports: [
     BrowserModule,

@@ -19,7 +19,8 @@ export class NavbarComponent implements OnInit {
     return this.router.url == path ? 'btn-light' : 'btn-link';
   }
 
-  isUserLogged$: Observable<boolean>;
+  public isUserLogged$: Observable<boolean>;
+  userRole$ : Observable<string>
 
   /* Sign up variables */
   isSignUpOkButtonEnabled = false;
@@ -32,6 +33,11 @@ export class NavbarComponent implements OnInit {
     })
 
     this.isUserLogged$ = this.userService.isLoggedIn.asObservable();
+    this.userRole$ = this.userService.roleAs.asObservable();
+  }
+
+  isUserAdmin(){
+    return this.userService.roleAs.getValue() == 'admin';
   }
 
   redirectToSignUp() {

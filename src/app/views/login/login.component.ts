@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, FormArrayName, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
+import { LoggingService } from 'src/app/shared/services/logging/logging.service';
 import { UserService } from 'src/app/shared/services/user/user.service';
 
 @Component({
@@ -9,16 +10,22 @@ import { UserService } from 'src/app/shared/services/user/user.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm = this.formBuilder.group({
     email: [''],
     password: [''],
   });
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private toastr: ToastrService, private dialogService: DialogService) {
-    this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
+
+  constructor(private formBuilder: FormBuilder, private userService: UserService, private toastr: ToastrService, private dialogService: DialogService, private logger: LoggingService) {
+
+  }
+
+  ngOnDestroy(): void {
+    this.dialogService.actionTaken.unsubscribe();
   }
 
   ngOnInit(): void {
+    this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
   }
 
   onModalActionTaken(action: DialogEventType | undefined) {
@@ -46,10 +53,11 @@ export class LoginComponent implements OnInit {
       this.toastr.error(`The specified user's email was not verified.`);
     }
 
-    if (valid)
-    {
+    if (valid) {
       this.userService.loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '');
     }
+
+    this.dialogService.actionTaken.unsubscribe();
   }
 
   onQuickAccess(role: string, id: string) {
