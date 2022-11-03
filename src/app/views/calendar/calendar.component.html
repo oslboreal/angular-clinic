@@ -1,12 +1,21 @@
 <div id="calendar-container">
-    <!-- <div id="users-search-container">
-        <h1>Search user:</h1>
-        <form>
-            <input id="search-input" class="form-control" type="text" [formControl]="filter" />
-        </form>
-    </div> -->
+    <form>
+        <div class="row mb-3">
+            <div class="mb-3 col">
+                <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Specialist:</label>
+                <div class="col-xs-3 col-sm-auto">
+                    <input id="table-filtering-search" class="form-control" type="text" />
+                </div>
+            </div>
+            <div class="mb-3 col">
+                <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Speciality:</label>
+                <div class="col-xs-3 col-sm-auto">
+                    <input id="table-filtering-search" class="form-control" type="text" />
+                </div>
+            </div>
+        </div>
+    </form>
     <div fxLayout="column"><button class="btn btn-dark">ADD APPOINTMENT</button></div>
-    <div fxLayout="column"><button class="btn btn-dark">DELETE APPOINTMENT</button></div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -34,11 +43,9 @@
                     Franco Lippi
                 </td>
                 <td>
-                    <button
-                        class="btn btn-success action-btn">Delete appointment</button>
+                    <button class="btn btn-success action-btn">Delete appointment</button>
 
-                    <button
-                        class="btn btn-danger action-btn">Check out observation</button>
+                    <button class="btn btn-danger action-btn">Check out observation</button>
                 </td>
             </tr>
             <!-- <tr *ngFor="let user of appointments$ | async; index as i">
