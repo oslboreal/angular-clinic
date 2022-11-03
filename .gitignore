@@ -58,3 +58,8 @@ testem.log
 Thumbs.db
 .gitignore
 .firebase/hosting.cHVibGlj.cache
+firebase-debug.log
+public/3rdpartylicenses.txt
+public/index.html
+public/styles.9531b8ce1fb28b6c.css
+.firebase/hosting.cHVibGlj.cache
