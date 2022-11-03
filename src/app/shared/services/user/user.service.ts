@@ -70,7 +70,7 @@ export class UserService {
     dynamicLinkDomain: 'example.page.link'
   };
 
-  createUser(user: User) {
+  createUser(user: User, logInUser: boolean) {
     /* User disabled by default */
     user.enabled = false;
 
@@ -91,8 +91,11 @@ export class UserService {
 
               this.firebaseAuth.createUserWithEmailAndPassword(user.email, user.password)
                 .then(credential => {
-                  credential.user?.updateProfile({ displayName: user.name, photoURL: user.firstImage })
-                  credential.user?.sendEmailVerification().then(() => this.router.navigateByUrl('/email-sent'));
+                  let emailVerificationPromise = credential.user?.sendEmailVerification();
+                  if (logInUser) {
+                    credential.user?.updateProfile({ displayName: user.name, photoURL: user.firstImage })
+                    emailVerificationPromise?.then(() => this.router.navigateByUrl('/email-sent'));
+                  }
                 })
               return from(this.firestore.collection<User>('users').add(user));
             })

@@ -1,18 +1,31 @@
 <!-- Options -->
 <!-- User form -->
 <div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
-    <button class="btn btn-outlined" type="submit" (click)="onQuickAccess('patient', '1')">PATIENT 1</button>
-    <button class="btn btn-outlined" type="submit" (click)="onQuickAccess('patient', '2')">PATIENT 2</button>
-    <button class="btn btn-outlined" type="submit" (click)="onQuickAccess('patient', '3')">PATIENT 3</button>
+    <a href="#" (click)="onQuickAccess('patient', '1')">
+        <img src="https://cdn4.iconfinder.com/data/icons/medical-and-health-15/128/115-512.png" style="height: 3rem;" alt="" srcset="">
+    </a>
+    <a href="#" (click)="onQuickAccess('patient', '2')">
+        <img src="https://cdn4.iconfinder.com/data/icons/medical-and-health-15/128/115-512.png" style="height: 3rem;" alt="" srcset="">
+    </a>
+    <a href="#" (click)="onQuickAccess('patient', '3')">
+        <img src="https://cdn4.iconfinder.com/data/icons/medical-and-health-15/128/115-512.png" style="height: 3rem;" alt="" srcset="">
+    </a>
 </div>
 
 <div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
-    <button class="btn btn-outlined" (click)="onQuickAccess('specialist', '1')" type="submit">SPECIALIST 1</button>
-    <button class="btn btn-outlined" (click)="onQuickAccess('specialist', '2')" type="submit">SECIALIST 2</button>
+    <a href="#" (click)="onQuickAccess('specialist', '1')">
+        <img src="https://cdn1.iconfinder.com/data/icons/pharmacy-flat-gradient/64/12_pharmacist_female_avatar_pharmacy_hospital_health-512.png" style="height: 3rem;" alt="" srcset="">
+    </a>
+
+    <a href="#" (click)="onQuickAccess('specialist', '2')">
+        <img src="https://cdn1.iconfinder.com/data/icons/pharmacy-flat-gradient/64/12_pharmacist_female_avatar_pharmacy_hospital_health-512.png" style="height: 3rem;" alt="" srcset="">
+    </a>
 </div>
 
 <div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
-    <button class="btn btn-outlined" (click)="onQuickAccess('admin', '')"  type="submit">ADMIN</button>
+    <a href="#" (click)="onQuickAccess('admin', '')">
+        <img src="https://www.clipartmax.com/png/middle/319-3191274_male-avatar-admin-profile.png" style="height: 3rem;" alt="" srcset="">
+    </a>
 </div>
 
 <div fxLAyout="row" fxLayoutAlign="center center" id="form-container">

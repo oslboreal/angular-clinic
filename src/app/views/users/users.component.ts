@@ -26,6 +26,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     age: [0, [Validators.required, Validators.min(0)]],
     nationalIdentification: ['', Validators.required],
     email: ['', Validators.email],
+    role: ['admin'],
     password: ['', Validators.required],
     firstImage: ['', Validators.required],
   });
@@ -56,11 +57,11 @@ export class UsersComponent implements OnInit, OnDestroy {
     if (!this.adminForm.valid) {
       this.toastr.error('You are trying to send invalid data, please refresh the site.');
     } else {
+      this.adminForm.controls.role.setValue('admin');
       let user: User = this.adminForm.value as User;
-      user.role = 'admin';
       user.firstImage = this.imageBlob;
 
-      this.userService.createUser(user).subscribe(
+      this.userService.createUser(user, false).subscribe(
         () => { },
         () => { this.toastr.error('Error connecting to the data store, please try again.'); },
         () => { this.toastr.success('Admin created successfully...'); }

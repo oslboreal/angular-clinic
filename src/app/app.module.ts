@@ -39,6 +39,7 @@ import { UnderConstructionComponent } from './views/under-construction/under-con
 import { HttpClientModule } from '@angular/common/http';
 import { LoggingService } from './shared/services/logging/logging.service';
 import { VerificationEmailSentComponent } from './views/verification-email-sent/verification-email-sent.component';
+import { CalendarComponent } from './views/calendar/calendar.component';
 
 /* Services */
 
@@ -57,6 +58,7 @@ import { VerificationEmailSentComponent } from './views/verification-email-sent/
     DirectivesDirective,
     UnderConstructionComponent,
     VerificationEmailSentComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,

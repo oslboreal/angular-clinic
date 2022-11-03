@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, FormArrayName, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
@@ -8,9 +8,9 @@ import { UserService } from 'src/app/shared/services/user/user.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy, OnChanges {
   loginForm = this.formBuilder.group({
     email: [''],
     password: [''],
@@ -20,8 +20,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   }
 
+  ngOnChanges(): void {
+
+  }
+
   ngOnDestroy(): void {
-    this.dialogService.actionTaken.unsubscribe();
+    this.dialogService.actionTaken.unsubscribe(); // TODO : FIX BUG.
   }
 
   ngOnInit(): void {
@@ -56,15 +60,20 @@ export class LoginComponent implements OnInit, OnDestroy {
     if (valid) {
       this.userService.loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '');
     }
-
-    this.dialogService.actionTaken.unsubscribe();
   }
 
   onQuickAccess(role: string, id: string) {
-    let defaultEmailDomain = '@vallejo-clinic.utn';
-    let email = role;
-    email += id + defaultEmailDomain;
-    this.loginForm.controls.email.setValue(email);
-    this.loginForm.controls.password.setValue('testingUser');
+    if (role == 'admin') {
+      let defaultEmailDomain = '@gmail.com';
+      let email = 'oslboreal' + defaultEmailDomain;
+      this.loginForm.controls.email.setValue(email);
+      this.loginForm.controls.password.setValue('userTesting');
+    } else {
+      let defaultEmailDomain = '@vallejo-clinic.utn';
+      let email = role;
+      email += id + defaultEmailDomain;
+      this.loginForm.controls.email.setValue(email);
+      this.loginForm.controls.password.setValue('testingUser');
+    }
   }
 }

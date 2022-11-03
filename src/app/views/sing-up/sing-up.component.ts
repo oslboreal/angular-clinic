@@ -70,7 +70,7 @@ export class SingUpComponent implements OnInit, OnDestroy {
       user.role = this.selectedCard;
       user.firstImage = this.firstImageBlob;
       user.secondImage = this.secondImageBlob;
-      this.userService.createUser(user).subscribe(
+      this.userService.createUser(user, true).subscribe(
         () => { },
         () => { this.toastr.error('Error connecting to the data store, please try again.'); },
         () => { this.toastr.success('Signed up successfully, redirecting...'); }

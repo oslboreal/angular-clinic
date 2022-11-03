@@ -5,7 +5,7 @@
             <input id="search-input" class="form-control" type="text" [formControl]="filter" />
         </form>
     </div> -->
-    <div fxLayout="column"><button class="btn btn-dark" (click)="showForm(loginForm)">NEW ADMIN</button></div>
+    <div fxLayout="column"><button class="btn btn-dark" (click)="showForm(form)">NEW ADMIN</button></div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -43,7 +43,7 @@
         </tbody>
     </table>
 
-    <ng-template #loginForm>
+    <ng-template #form>
         <app-dialog-template [title]="'Create admin'" [isOkButtonEnabled]="true">
             <form [formGroup]="adminForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
                 <div class="form-group" fxLayout="column" fxLayoutAlign="space-between start">

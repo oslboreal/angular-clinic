@@ -1,0 +1,68 @@
+<div id="calendar-container">
+    <!-- <div id="users-search-container">
+        <h1>Search user:</h1>
+        <form>
+            <input id="search-input" class="form-control" type="text" [formControl]="filter" />
+        </form>
+    </div> -->
+    <div fxLayout="column"><button class="btn btn-dark">ADD APPOINTMENT</button></div>
+    <div fxLayout="column"><button class="btn btn-dark">DELETE APPOINTMENT</button></div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Date from</th>
+                <th scope="col">Date to</th>
+                <th scope="col">Specialist</th>
+                <th scope="col">Patient</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>
+                    12/11/2022
+                </td>
+                <td>
+                    13/11/2022
+                </td>
+                <td>
+                    Juan Marcos Vallejo
+                </td>
+                <td>
+                    Franco Lippi
+                </td>
+                <td>
+                    <button
+                        class="btn btn-success action-btn">Delete appointment</button>
+
+                    <button
+                        class="btn btn-danger action-btn">Check out observation</button>
+                </td>
+            </tr>
+            <!-- <tr *ngFor="let user of appointments$ | async; index as i">
+                <th scope="row">{{ i + 1 }}</th>
+                <td>
+                    <ngb-highlight [result]="user.name + ' ' + user.surname" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.age | number" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.email" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.role" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <button *ngIf="!user.enabled" [disabled]="user.role == 'admin'" (click)="enableUser(user.email)"
+                        class="btn btn-success action-btn">Habilitar</button>
+
+                    <button *ngIf="user.enabled" [disabled]="user.role == 'admin'" (click)="disableUser(user.email)"
+                        class="btn btn-danger action-btn">Deshabilitar</button>
+                </td>
+            </tr> -->
+        </tbody>
+    </table>
+</div>
