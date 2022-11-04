@@ -39,6 +39,7 @@ export class SingUpComponent implements OnInit, OnDestroy {
     password: ['', Validators.required],
     role: [''],
     enabled: [false],
+    recaptcha: ['', Validators.required],
     speciality: ['', this.requiredFor('specialist')],
     extraSpecialities: this.formBuilder.array([])
   });
@@ -46,6 +47,16 @@ export class SingUpComponent implements OnInit, OnDestroy {
   get extraSpecialities() {
     return this.userForm.get('extraSpecialities') as FormArray;
   }
+
+  public captchaIsLoaded = false;
+  public captchaSuccess = false;
+  public captchaIsExpired = false;
+  public captchaResponse?: string;
+
+  public theme: 'light' | 'dark' = 'light';
+  public size: 'compact' | 'normal' = 'normal';
+  public lang = 'en';
+  public type = 'image';
 
   constructor(private formBuilder: FormBuilder, private dialogService: DialogService, private toastr: ToastrService, private userService: UserService) {
     try {
@@ -95,6 +106,10 @@ export class SingUpComponent implements OnInit, OnDestroy {
         this.secondImageBlob = file;
         break;
     }
+  }
+
+  handleSuccess(data : any) {
+    console.log(data);
   }
 
   ngOnDestroy(): void {
