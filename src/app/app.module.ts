@@ -41,6 +41,7 @@ import { LoggingService } from './shared/services/logging/logging.service';
 import { VerificationEmailSentComponent } from './views/verification-email-sent/verification-email-sent.component';
 import { CalendarComponent } from './views/calendar/calendar.component';
 import { CalendarService } from './shared/services/calendar/calendar.service';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 /* Services */
 
@@ -77,6 +78,7 @@ import { CalendarService } from './shared/services/calendar/calendar.service';
     provideFirestore(() => getFirestore()),
     AngularFireStorageModule,
     provideAuth(() => getAuth()),
+    NgxSpinnerModule.forRoot({type: 'ball-scale-multiple'}),
     NgbModule,
   ],
   providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }, LoggingService, CalendarService],

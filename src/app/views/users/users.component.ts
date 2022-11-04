@@ -10,6 +10,7 @@ import { UserService } from 'src/app/shared/services/user/user.service';
 import { LoggingService } from 'src/app/shared/services/logging/logging.service';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
 import { ToastrService } from 'ngx-toastr';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: 'app-users',
@@ -32,7 +33,12 @@ export class UsersComponent implements OnInit, OnDestroy {
   });
 
 
-  constructor(private toastr: ToastrService, private formBuilder: FormBuilder, pipe: DecimalPipe, private userService: UserService, private logger: LoggingService, private dialogService: DialogService) {
+  constructor(private toastr: ToastrService,
+    private formBuilder: FormBuilder,
+    private userService: UserService,
+    private logger: LoggingService,
+    private spinner: NgxSpinnerService,
+    private dialogService: DialogService) {
     this.users$ = userService.getUsers();
   }
 
@@ -86,6 +92,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.spinner.show();
+    console.log('called');
+
+    this.users$.subscribe(x => {
+      console.log('called');
+      this.spinner.hide();
+    });
     this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
   }
 }
