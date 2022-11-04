@@ -42,6 +42,7 @@ import { VerificationEmailSentComponent } from './views/verification-email-sent/
 import { CalendarComponent } from './views/calendar/calendar.component';
 import { CalendarService } from './shared/services/calendar/calendar.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxCaptchaModule } from 'ngx-captcha';
 
 /* Services */
 
@@ -79,6 +80,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     AngularFireStorageModule,
     provideAuth(() => getAuth()),
     NgxSpinnerModule.forRoot({type: 'ball-scale-multiple'}),
+    NgxCaptchaModule,
     NgbModule,
   ],
   providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }, LoggingService, CalendarService],

@@ -1,5 +1,6 @@
 import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, FormArrayName, FormBuilder } from '@angular/forms';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
 import { LoggingService } from 'src/app/shared/services/logging/logging.service';
@@ -16,7 +17,12 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
     password: [''],
   });
 
-  constructor(private formBuilder: FormBuilder, private userService: UserService, private toastr: ToastrService, private dialogService: DialogService, private logger: LoggingService) {
+  constructor(private formBuilder: FormBuilder,
+    private userService: UserService,
+    private toastr: ToastrService,
+    private dialogService: DialogService,
+    private spinner: NgxSpinnerService,
+    private logger: LoggingService) {
 
   }
 
@@ -40,6 +46,7 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onSubmit() {
+    this.spinner.show();
     let valid = true;
     if (!this.loginForm.controls.email) {
       valid = false;
@@ -57,8 +64,13 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
       this.toastr.error(`The specified user's email was not verified.`);
     }
 
+    this.spinner.show();
     if (valid) {
-      this.userService.loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '');
+      this.userService
+        .loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '')
+        .subscribe(next => {
+          this.spinner.hide();
+        });
     }
   }
 

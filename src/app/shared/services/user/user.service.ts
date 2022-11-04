@@ -13,10 +13,11 @@ import {
   signInWithPopup,
   signOut,
   user,
+  UserCredential,
 } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { BehaviorSubject, finalize, forkJoin, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, finalize, forkJoin, from, map, Observable, of } from 'rxjs';
 import { DocumentReference, query, where } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -103,40 +104,50 @@ export class UserService {
       );
   }
 
-  loginUser(email: string, password: string) {
-    return from(signInWithEmailAndPassword(this.auth, email, password))
-      .subscribe((result) => {
-        this.userData = result.user;
+  doLogin<T>(source$: Observable<UserCredential>): Observable<User> {
+    source$.forEach(result => {
 
-        /* Set a field indicating whether the user is verified or not */
-        this.verified.next(result.user.emailVerified);
+      /* Get user from result */
+      this.userData = result.user;
 
-        var ref = this.firestore.collection<User>('users').ref;
-        ref.where("email", "==", this.userData.email).get().then(snapshot => {
-          if (snapshot.empty) {
-            this.toastr.error('User not found');
-          } else {
-            snapshot.forEach(doc => {
-              this.roleAs.next(doc.get('role'));
-              let name = doc.get('name');
-              localStorage.setItem('role', doc.get('role'));
-              this.toastr.success('Welcome ' + name);
-            });
-          }
-        });
+      /* Set a field indicating whether the user is verified or not */
+      this.verified.next(result.user.emailVerified);
 
-        return of({ success: this.isLoggedIn, role: this.roleAs });
+      var ref = this.firestore.collection<User>('users').ref;
+
+      ref.where("email", "==", this.userData.email).get().then(snapshot => {
+        if (snapshot.empty) {
+          this.toastr.error('User not found');
+        } else {
+          snapshot.forEach(doc => {
+            this.roleAs.next(doc.get('role'));
+            let name = doc.get('name');
+            localStorage.setItem('role', doc.get('role'));
+            this.toastr.success('Welcome ' + name);
+          });
+        }
       },
         (error) => {
           this.toastr.error('Invalid credentials, please try again.');
         })
+    });
+
+    return of(this.userData);
+  }
+
+  loginUser(email: string, password: string): Observable<User> {
+    /* Promis to Observable */
+    let signIn = from(signInWithEmailAndPassword(this.auth, email, password));
+
+    /* Do login */
+    return signIn.pipe(this.doLogin);
   }
 
   logout() {
     this.firebaseAuth.signOut();
-    this.roleAs.next('')
-    this.verified.next(false)
-    this.isLoggedIn.next(false)
+    this.roleAs.next('');
+    this.verified.next(false);
+    this.isLoggedIn.next(false);
   }
 
   enableUser(email: string) {

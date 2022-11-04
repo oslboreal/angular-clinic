@@ -6,6 +6,7 @@ import { LoginComponent } from 'src/app/views/login/login.component';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user/user.service';
 import { Observable } from 'rxjs';
+import { NgxSpinnerService } from "ngx-spinner";
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -20,12 +21,12 @@ export class NavbarComponent implements OnInit {
   }
 
   public isUserLogged$: Observable<boolean>;
-  userRole$ : Observable<string>
+  userRole$: Observable<string>
 
   /* Sign up variables */
   isSignUpOkButtonEnabled = false;
 
-  constructor(private dialogService: DialogService, private router: Router, private userService: UserService) {
+  constructor(private spinner: NgxSpinnerService, private dialogService: DialogService, private router: Router, private userService: UserService) {
     this.dialogService.actionTaken.subscribe((result) => {
       if (result == DialogEventType.cancel || result == DialogEventType.crossClick || result == DialogEventType.close) {
         this.isSignUpOkButtonEnabled = false;
@@ -34,9 +35,13 @@ export class NavbarComponent implements OnInit {
 
     this.isUserLogged$ = this.userService.isLoggedIn.asObservable();
     this.userRole$ = this.userService.roleAs.asObservable();
+
+    this.isUserLogged$.subscribe(x => {
+      spinner.hide();
+    })
   }
 
-  isUserAdmin(){
+  isUserAdmin() {
     return this.userService.roleAs.getValue() == 'admin';
   }
 
@@ -69,6 +74,6 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.spinner.show();
   }
-
 }

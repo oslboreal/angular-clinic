@@ -84,6 +84,11 @@
             <input type="text" name="role" class="form-control" formControlName="role" [value]="this.selectedCard"
                 hidden>
             <br>
+            <ngx-recaptcha2 #captchaElem siteKey="6LfgctkiAAAAAM_rTB_tf5QNI5X23hWM2AaamJgm"
+                (success)="handleSuccess($event)" [size]="size" [hl]="lang" [theme]="theme" [type]="'image'"
+                formControlName="recaptcha">
+            </ngx-recaptcha2>
+            <br>
             <button class="btn btn-clinic-secondary" type="submit" [disabled]="!userForm.valid">Submit</button>
         </div>
     </form>
