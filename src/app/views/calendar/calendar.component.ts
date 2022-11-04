@@ -9,7 +9,7 @@ import { UserService } from 'src/app/shared/services/user/user.service';
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
-  appointments: IAppointment[];
+  public appointments: IAppointment[];
 
   constructor(private calendar: CalendarService, private userService: UserService) {
     this.appointments = this.calendar.getUserAppointments();

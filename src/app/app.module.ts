@@ -40,6 +40,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoggingService } from './shared/services/logging/logging.service';
 import { VerificationEmailSentComponent } from './views/verification-email-sent/verification-email-sent.component';
 import { CalendarComponent } from './views/calendar/calendar.component';
+import { CalendarService } from './shared/services/calendar/calendar.service';
 
 /* Services */
 
@@ -78,7 +79,7 @@ import { CalendarComponent } from './views/calendar/calendar.component';
     provideAuth(() => getAuth()),
     NgbModule,
   ],
-  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }, LoggingService],
+  providers: [DecimalPipe, UserService, { provide: BUCKET, useValue: 'gs://vallejo-entrega.appspot.com/' }, LoggingService, CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

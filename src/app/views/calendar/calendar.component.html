@@ -29,22 +29,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr *ngFor="let appointment of appointments index as i">
                 <th scope="row">1</th>
                 <td>
-                    12/11/2022
+                    {{appointment.dateFrom}}
                 </td>
                 <td>
-                    13/11/2022
+                    {{appointment.dateTo}}
                 </td>
                 <td>
-                    Juan Marcos Vallejo
+                    {{appointment.specialist}}
                 </td>
                 <td>
-                    Franco Lippi
+                    {{appointment.patientEmail}}
                 </td>
                 <td>
-                    Active
+                    {{appointment.cancelled ? 'Cancelled' : 'Active'}}
                 </td>
                 <td>
                     <button class="btn btn-success action-btn">Delete appointment</button>

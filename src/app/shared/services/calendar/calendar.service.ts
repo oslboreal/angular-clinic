@@ -22,10 +22,10 @@ export class CalendarService {
       let dateFrom = new Date();
       testAppointment.dateFrom = dateFrom;
       dateFrom.setMinutes(dateFrom.getMinutes() + 5);
-      testAppointment.dateFrom = dateFrom; // Five minutes were added for testing purposes.
+      testAppointment.dateTo = dateFrom; // Five minutes were added for testing purposes.
       testAppointment.observation = "He's gonna die :(";
-      testAppointment.patientEmail = "patient1@clinic-vallejo.com";
-      testAppointment.specialist = "specialist1@clinic-vallejo.com";
+      testAppointment.patientEmail = "patient1@vallejo-clinic.utn";
+      testAppointment.specialist = "specialist1@vallejo-clinic.utn";
       testAppointment.speciality = "Dentist"
       this.appointments.push(testAppointment);
 
@@ -53,12 +53,12 @@ export class CalendarService {
     try {
       let user = JSON.parse(localStorage.getItem('user') ?? '');
       let email = user.email;
-      let role = JSON.parse(localStorage.getItem('role') ?? '');
+      let role = localStorage.getItem('role');
 
       this.appointments = this.getAppointmentsFromLocalStorage();
       return this.appointments.filter((x) => {
         if (role == 'admin') {
-          return x.patientEmail == email;
+          return true; // returns all
         } else if (role == 'patient') {
           return x.patientEmail == email;
         } else {
@@ -135,11 +135,13 @@ export class CalendarService {
   /* Local storage management */
 
   private setLocalStorage(appointments: IAppointment[]) {
-    JSON.stringify(appointments);
+    let json = JSON.stringify(appointments);
+    localStorage.setItem('appointments', json);
   }
 
   private getAppointmentsFromLocalStorage() {
-    return JSON.parse(localStorage.getItem('appointments') ?? '');
+    let storedVal = localStorage.getItem('appointments');
+    return JSON.parse(storedVal ?? '[]');
   }
 
   private getUniqueId(parts: number): string {
