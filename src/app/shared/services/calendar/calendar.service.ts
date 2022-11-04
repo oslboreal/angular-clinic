@@ -49,13 +49,23 @@ export class CalendarService {
     }
   }
 
-  getPatientAppointments() {
+  getUserAppointments() {
     try {
       let user = JSON.parse(localStorage.getItem('user') ?? '');
       let email = user.email;
+      let role = JSON.parse(localStorage.getItem('role') ?? '');
 
       this.appointments = this.getAppointmentsFromLocalStorage();
-      return this.appointments.filter(x => x.patientEmail == email);
+      return this.appointments.filter((x) => {
+        if (role == 'admin') {
+          return x.patientEmail == email;
+        } else if (role == 'patient') {
+          return x.patientEmail == email;
+        } else {
+          // Specialist.
+          return x.specialist == email;
+        }
+      });
     } catch (error) {
       return [];
     }
