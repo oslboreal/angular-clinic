@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import { User } from '../user/user';
 import { IAppointment } from './appointment';
 
@@ -13,22 +14,32 @@ export class CalendarService {
   }
 
   isAppointmentSlotAvailableForPatient(user: User, dateFrom: Date, dateTo: Date) {
-    // Get user appointments, check whether an appointment exists or not.
-    const appointment = {} as IAppointment;
-    appointment.dateFrom = dateFrom;
-    appointment.dateTo = dateTo;
-    appointment.patientEmail = user.email;
-    appointment.durationInMinutes = (appointment.dateTo.getUTCMinutes() - appointment.dateFrom.getUTCMinutes());
+    try {
+      // Get user appointments, check whether an appointment exists or not.
+      const appointment = {} as IAppointment;
+      appointment.dateFrom = dateFrom;
+      appointment.dateTo = dateTo;
+      appointment.patientEmail = user.email;
+      appointment.durationInMinutes = (appointment.dateTo.getUTCMinutes() - appointment.dateFrom.getUTCMinutes());
 
-    // Check whether slot is available in list.
+      return true;
+      // Check whether slot is available in list.
+    } catch (error) {
+      return false;
+    }
   }
 
-  getUserAppointments() {
-    let user = JSON.parse(localStorage.getItem('user') ?? '');
-    let email = user.email;
+  getPatientAppointments() {
+    try {
+      let user = JSON.parse(localStorage.getItem('user') ?? '');
+      let email = user.email;
 
-    this.appointments = this.getAppointmentsFromLocalStorage();
-    return this.appointments.filter(x => x.patientEmail == email);
+      this.appointments = this.getAppointmentsFromLocalStorage();
+      return this.appointments.filter(x => x.patientEmail == email);
+    } catch (error) {
+      return [];
+    }
+
   }
 
   createAppointment(appointment: IAppointment) {
@@ -49,19 +60,26 @@ export class CalendarService {
     // }
   }
 
-  cancelAppointment(appointmentId: string, reason: string) {
-    this.appointments = this.getAppointmentsFromLocalStorage();
+  cancelAppointment(appointmentId: string, reason: string): Observable<boolean> {
+    try {
+      this.appointments = this.getAppointmentsFromLocalStorage();
 
-    /* Cancel appointment */
-    this.appointments.map((app) => {
-      if (app.id == appointmentId) {
-        app.cancelled = true;
-        app.cancellationReason = reason;
-      }
-    });
+      /* Cancel appointment */
+      this.appointments.map((app) => {
+        if (app.id == appointmentId) {
+          app.cancelled = true;
+          app.cancellationReason = reason;
+        }
+      });
 
-    /* Persists changes */
-    this.setLocalStorage(this.appointments);
+      /* Persists changes */
+      this.setLocalStorage(this.appointments);
+
+      return of(true);
+    } catch (error) {
+      return of(false);
+    }
+
   }
 
   getAppointmentObservation(appointmentId: string) {
