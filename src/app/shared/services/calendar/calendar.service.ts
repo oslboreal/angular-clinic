@@ -11,12 +11,32 @@ export class CalendarService {
 
   constructor() {
     this.appointments = this.getAppointmentsFromLocalStorage();
+
+    /* Adding appointment for testing */
+    if (this.appointments.length == 0) {
+      let testAppointment = {} as IAppointment;
+      testAppointment.id = this.getUniqueId(2);
+      testAppointment.calification = 4;
+      testAppointment.cancelled = true;
+      testAppointment.cancellationReason = "This is a testing one";
+      let dateFrom = new Date();
+      testAppointment.dateFrom = dateFrom;
+      dateFrom.setMinutes(dateFrom.getMinutes() + 5);
+      testAppointment.dateFrom = dateFrom; // Five minutes were added for testing purposes.
+      testAppointment.observation = "He's gonna die :(";
+      testAppointment.patientEmail = "patient1@clinic-vallejo.com";
+      testAppointment.specialist = "specialist1@clinic-vallejo.com";
+      testAppointment.speciality = "Dentist"
+      this.appointments.push(testAppointment);
+
+      this.setLocalStorage(this.appointments);
+    }
   }
 
   isAppointmentSlotAvailableForPatient(user: User, dateFrom: Date, dateTo: Date) {
     try {
       // Get user appointments, check whether an appointment exists or not.
-      const appointment = {} as IAppointment;
+      let appointment = {} as IAppointment;
       appointment.dateFrom = dateFrom;
       appointment.dateTo = dateTo;
       appointment.patientEmail = user.email;
@@ -39,7 +59,6 @@ export class CalendarService {
     } catch (error) {
       return [];
     }
-
   }
 
   createAppointment(appointment: IAppointment) {
