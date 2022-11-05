@@ -38,12 +38,6 @@
                     <app-login></app-login>
                 </app-dialog-template>
             </ng-template>
-
-            <ng-template #signUp>
-                <app-dialog-template [title]="'Sign up'" [isOkButtonEnabled]="isSignUpOkButtonEnabled">
-                    <app-sing-up (isFormValid)="onSignUpFormChange($event)"></app-sing-up>
-                </app-dialog-template>
-            </ng-template>
         </div>
     </div>
 </header>

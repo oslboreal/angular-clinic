@@ -105,42 +105,36 @@ export class UserService {
   }
 
   doLogin<T>(source$: Observable<UserCredential>): Observable<User> {
-    source$.forEach(result => {
-
-      /* Get user from result */
-      this.userData = result.user;
-
-      /* Set a field indicating whether the user is verified or not */
-      this.verified.next(result.user.emailVerified);
-
-      var ref = this.firestore.collection<User>('users').ref;
-
-      ref.where("email", "==", this.userData.email).get().then(snapshot => {
-        if (snapshot.empty) {
-          this.toastr.error('User not found');
-        } else {
-          snapshot.forEach(doc => {
-            this.roleAs.next(doc.get('role'));
-            let name = doc.get('name');
-            localStorage.setItem('role', doc.get('role'));
-            this.toastr.success('Welcome ' + name);
-          });
-        }
-      },
-        (error) => {
-          this.toastr.error('Invalid credentials, please try again.');
-        })
-    });
+    source$.forEach
 
     return of(this.userData);
   }
 
-  loginUser(email: string, password: string): Observable<User> {
-    /* Promis to Observable */
-    let signIn = from(signInWithEmailAndPassword(this.auth, email, password));
+  loginUser(email: string, password: string) {
+    return signInWithEmailAndPassword(this.auth, email, password)
+      .then((result) => {
+        this.userData = result.user;
 
-    /* Do login */
-    return signIn.pipe(this.doLogin);
+        /* Set a field indicating whether the user is verified or not */
+        this.verified.next(result.user.emailVerified);
+
+        var ref = this.firestore.collection<User>('users').ref;
+        ref.where("email", "==", this.userData.email).get().then(snapshot => {
+          if (snapshot.empty) {
+            this.toastr.error('User not found');
+          } else {
+            snapshot.forEach(doc => {
+              this.roleAs.next(doc.get('role'));
+              let name = doc.get('name');
+              localStorage.setItem('role', doc.get('role'));
+              this.toastr.success('Welcome ' + name);
+            });
+          }
+        });
+      },
+        (error) => {
+          this.toastr.error('Invalid credentials, please try again.');
+        })
   }
 
   logout() {

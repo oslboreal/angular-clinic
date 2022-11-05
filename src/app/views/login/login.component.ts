@@ -2,6 +2,7 @@ import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, FormArray, FormArrayName, FormBuilder } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { firstValueFrom, from, Observable, Subscription } from 'rxjs';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
 import { LoggingService } from 'src/app/shared/services/logging/logging.service';
 import { UserService } from 'src/app/shared/services/user/user.service';
@@ -16,6 +17,7 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
     email: [''],
     password: [''],
   });
+  loginSubscription: Subscription | undefined = undefined;
 
   constructor(private formBuilder: FormBuilder,
     private userService: UserService,
@@ -31,11 +33,12 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.dialogService.actionTaken.unsubscribe(); // TODO : FIX BUG.
+    // this.dialogService.actionTaken.unsubscribe();
   }
 
   ngOnInit(): void {
-    this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
+    if (!this.dialogService.actionTaken.observed)
+      this.loginSubscription = this.dialogService.actionTaken.subscribe(next => this.onModalActionTaken(next))
   }
 
   onModalActionTaken(action: DialogEventType | undefined) {
@@ -58,20 +61,18 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
       this.toastr.error('Invalid password.');
     }
 
-    let isEmailVerified = true;
-    if (!isEmailVerified) {
+    if (this.loginForm.controls.password.value == '' || this.loginForm.controls.email.value == '') {
       valid = false
-      this.toastr.error(`The specified user's email was not verified.`);
     }
 
     this.spinner.show();
     if (valid) {
       this.userService
         .loginUser(this.loginForm.controls.email.value ?? '', this.loginForm.controls.password.value ?? '')
-        .subscribe(next => {
-          this.spinner.hide();
-        });
+        .finally(() => this.spinner.hide());
     }
+
+    console.log('Form submitted.');
   }
 
   onQuickAccess(role: string, id: string) {

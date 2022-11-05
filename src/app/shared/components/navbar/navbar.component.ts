@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ContentChild, Directive } from '@angular/core';
+import { Component, OnInit, TemplateRef, ContentChild, Directive, OnChanges } from '@angular/core';
 import { faUserNurse } from '@fortawesome/free-solid-svg-icons';
 import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 import { DialogEventType, DialogService } from '../../services/dialog/dialog.service';
@@ -12,7 +12,7 @@ import { NgxSpinnerService } from "ngx-spinner";
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnChanges {
   nurseIcon = faUserNurse;
   nurseIconSize: SizeProp = "3x";
 
@@ -24,15 +24,8 @@ export class NavbarComponent implements OnInit {
   userRole$: Observable<string>
 
   /* Sign up variables */
-  isSignUpOkButtonEnabled = false;
 
   constructor(private spinner: NgxSpinnerService, private dialogService: DialogService, private router: Router, private userService: UserService) {
-    this.dialogService.actionTaken.subscribe((result) => {
-      if (result == DialogEventType.cancel || result == DialogEventType.crossClick || result == DialogEventType.close) {
-        this.isSignUpOkButtonEnabled = false;
-      }
-    })
-
     this.isUserLogged$ = this.userService.isLoggedIn.asObservable();
     this.userRole$ = this.userService.roleAs.asObservable();
 
@@ -57,11 +50,6 @@ export class NavbarComponent implements OnInit {
     this.router.navigateByUrl('/users');
   }
 
-  onSignUpFormChange($event: boolean) {
-    this.isSignUpOkButtonEnabled = $event;
-    console.log('Form valid? ' + $event);
-  }
-
   showLoginForm(content: TemplateRef<LoginComponent>) {
     this.dialogService.setDialog(DialogEventType.open, content);
   }
@@ -71,6 +59,10 @@ export class NavbarComponent implements OnInit {
     localStorage.removeItem('user');
     localStorage.removeItem('role');
     this.router.navigateByUrl('/home');
+  }
+
+  ngOnChanges(): void {
+    console.log('navbar Changes');
   }
 
   ngOnInit(): void {
