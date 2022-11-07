@@ -1,33 +1,15 @@
 <!-- Options -->
 <!-- User form -->
 <div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
-    <img (click)="onQuickAccess('patient', '1')"
-        src="https://cdn4.iconfinder.com/data/icons/medical-and-health-15/128/115-512.png" style="height: 3rem;" alt=""
+    <img *ngIf="(this.quickAccessPatient | async)" (click)="onQuickAccess('patient', '1')" alt="Patient quick-access"
+        [src]="(this.quickAccessPatient | async)?.firstImage" style="height: 3rem;" srcset="">
+
+    <img *ngIf="(this.quickAccessSpecialist | async)" (click)="onQuickAccess('specialist', '2')"
+        alt="Specialist quick-access" [src]="(this.quickAccessSpecialist | async)?.firstImage" style="height: 3rem;"
         srcset="">
 
-    <img (click)="onQuickAccess('patient', '2')"
-        src="https://cdn4.iconfinder.com/data/icons/medical-and-health-15/128/115-512.png" style="height: 3rem;" alt=""
-        srcset="">
-
-    <img (click)="onQuickAccess('patient', '3')"
-        src="https://cdn4.iconfinder.com/data/icons/medical-and-health-15/128/115-512.png" style="height: 3rem;" alt=""
-        srcset="">
-</div>
-
-<div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
-    <img (click)="onQuickAccess('specialist', '1')"
-        src="https://cdn1.iconfinder.com/data/icons/pharmacy-flat-gradient/64/12_pharmacist_female_avatar_pharmacy_hospital_health-512.png"
-        style="height: 3rem;" alt="" srcset="">
-
-    <img (click)="onQuickAccess('specialist', '2')"
-        src="https://cdn1.iconfinder.com/data/icons/pharmacy-flat-gradient/64/12_pharmacist_female_avatar_pharmacy_hospital_health-512.png"
-        style="height: 3rem;" alt="" srcset="">
-</div>
-
-<div fxLAyout="row" fxLayoutAlign="center center" id="quick-access">
-    <img (click)="onQuickAccess('admin', '')"
-        src="https://www.clipartmax.com/png/middle/319-3191274_male-avatar-admin-profile.png" style="height: 3rem;"
-        alt="" srcset="">
+    <img *ngIf="(this.quickAccessAdmin | async)" (click)="onQuickAccess('admin', '')" alt="Admin quick-access"
+        [src]="(this.quickAccessAdmin | async)?.firstImage" style="height: 3rem;" srcset="">
 </div>
 
 <div fxLAyout="row" fxLayoutAlign="center center" id="form-container">

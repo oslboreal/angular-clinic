@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { firstValueFrom, from, Observable, Subscription } from 'rxjs';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
 import { LoggingService } from 'src/app/shared/services/logging/logging.service';
+import { User } from 'src/app/shared/services/user/user';
 import { UserService } from 'src/app/shared/services/user/user.service';
 
 @Component({
@@ -19,6 +20,10 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
   });
   loginSubscription: Subscription | undefined = undefined;
 
+  quickAccessPatient: Promise<void | User>;
+  quickAccessSpecialist: Promise<void | User>;
+  quickAccessAdmin: Promise<void | User>;
+
   constructor(private formBuilder: FormBuilder,
     private userService: UserService,
     private toastr: ToastrService,
@@ -26,7 +31,11 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
     private spinner: NgxSpinnerService,
     private logger: LoggingService) {
 
+    this.quickAccessAdmin = this.userService.getUserImge('oslboreal@gmail.com');
+    this.quickAccessSpecialist = this.userService.getUserImge('specialist1@vallejo-clinic.utn');
+    this.quickAccessPatient = this.userService.getUserImge('patient1@vallejo-clinic.utn');
   }
+
 
   ngOnChanges(): void {
 

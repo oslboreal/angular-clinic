@@ -137,6 +137,20 @@ export class UserService {
         })
   }
 
+  async getUserImge(email: string) {
+    console.log('Getting user');
+
+    let result = this.firestore.collection('users').ref.where('email', '==', email).get().then((querySnapshot) => {
+      let data;
+      data = querySnapshot.docs[0].data() as User;
+      return data;
+    }).catch((error) => {
+      console.log('Error getting user');
+    });
+
+    return result;
+  }
+
   logout() {
     this.firebaseAuth.signOut();
     this.roleAs.next('');
