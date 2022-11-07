@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from '../user/user';
 import { AppointmentStatus, IAppointment } from './appointment';
 
@@ -7,30 +7,50 @@ import { AppointmentStatus, IAppointment } from './appointment';
   providedIn: 'root'
 })
 export class CalendarService {
-  appointments: IAppointment[];
+  private appointments: IAppointment[];
+  appointmets$: BehaviorSubject<IAppointment[]> = new BehaviorSubject<IAppointment[]>([]);
 
   constructor() {
     this.appointments = this.getAppointmentsFromLocalStorage();
 
     /* Adding appointment for testing */
     if (this.appointments.length == 0) {
-      let testAppointment = {} as IAppointment;
-      testAppointment.id = this.getUniqueId(2);
-      testAppointment.calification = 4;
-      testAppointment.status = AppointmentStatus.cancelled;
-      testAppointment.cancellationReason = "This is a testing one";
+      let patientTestAppointment = {} as IAppointment;
+      patientTestAppointment.id = this.getUniqueId(2);
+      patientTestAppointment.calification = 4;
+      patientTestAppointment.status = AppointmentStatus.pending;
+      patientTestAppointment.cancellationReason = "This is a testing one";
       let dateFrom = new Date();
-      testAppointment.dateFrom = dateFrom;
+      patientTestAppointment.dateFrom = dateFrom;
       dateFrom.setMinutes(dateFrom.getMinutes() + 5);
-      testAppointment.dateTo = dateFrom; // Five minutes were added for testing purposes.
-      testAppointment.observation = "He's gonna die :(";
-      testAppointment.patientEmail = "patient1@vallejo-clinic.utn";
-      testAppointment.specialist = "specialist1@vallejo-clinic.utn";
-      testAppointment.speciality = "Dentist"
-      this.appointments.push(testAppointment);
+      patientTestAppointment.dateTo = dateFrom; // Five minutes were added for testing purposes.
+      patientTestAppointment.observation = "He's gonna die :(";
+      patientTestAppointment.patientEmail = "patient1@vallejo-clinic.utn";
+      patientTestAppointment.specialist = "nynvmqtohkqdrjpfus@tmmbt.net";
+      patientTestAppointment.speciality = "Dentist"
+      this.appointments.push(patientTestAppointment);
+
+      let adminTestAppointment = {} as IAppointment;
+      adminTestAppointment.id = this.getUniqueId(2);
+      adminTestAppointment.calification = 4;
+      adminTestAppointment.status = AppointmentStatus.cancelled;
+      adminTestAppointment.cancellationReason = "This is a testing one";
+      dateFrom = new Date();
+      adminTestAppointment.dateFrom = dateFrom;
+      dateFrom.setMinutes(dateFrom.getMinutes() + 5);
+      adminTestAppointment.dateTo = dateFrom; // Five minutes were added for testing purposes.
+      adminTestAppointment.observation = "He's gonna die :(";
+      adminTestAppointment.patientEmail = "patient1@vallejo-clinic.utn";
+      adminTestAppointment.specialist = "nynvmqtohkqdrjpfus@tmmbt.net";
+      adminTestAppointment.speciality = "Dentist"
+      this.appointments.push(adminTestAppointment);
 
       this.setLocalStorage(this.appointments);
+
     }
+
+    /* Emit apointments */
+    this.appointmets$.next(this.appointments);
   }
 
   isAppointmentSlotAvailableForPatient(user: User, dateFrom: Date, dateTo: Date) {
@@ -89,20 +109,23 @@ export class CalendarService {
     // }
   }
 
-  cancelAppointment(appointmentId: string, reason: string): Observable<boolean> {
+  changeAppointmentStatus(appointmentId: string, reason: string, status: AppointmentStatus): Observable<boolean> {
     try {
       this.appointments = this.getAppointmentsFromLocalStorage();
 
       /* Cancel appointment */
       this.appointments.map((app) => {
         if (app.id == appointmentId) {
-          app.status = AppointmentStatus.cancelled;
+          app.status = status;
           app.cancellationReason = reason;
         }
       });
 
       /* Persists changes */
       this.setLocalStorage(this.appointments);
+
+      /* Emit apointments */
+      this.appointmets$.next(this.appointments);
 
       return of(true);
     } catch (error) {

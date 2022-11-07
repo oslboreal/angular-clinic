@@ -17,7 +17,7 @@
             </div>
         </div>
     </form>
-    <div fxLayout="column"><button class="btn btn-dark">ADD APPOINTMENT</button></div>
+    <div fxLayout="column"><button class="btn btn-dark">ADD APPOINTMENT</button></div> <!-- Patient and Admin -->
     <table class="table table-striped">
         <thead>
             <tr>
@@ -27,11 +27,12 @@
                 <th scope="col">Specialist</th>
                 <th scope="col">Patient</th>
                 <th scope="col">Status</th>
+                <th scope="col">Reason</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let appointment of appointments index as i">
+            <tr *ngFor="let appointment of appointments | async index as i">
                 <th scope="row">1</th>
                 <td>
                     {{appointment.dateFrom}}
@@ -49,33 +50,65 @@
                     {{appointment.status}}
                 </td>
                 <td>
-                    <button class="btn btn-success action-btn">Delete appointment</button>
+                    {{appointment.cancellationReason}}
+                </td>
+                <td>
+                    <button
+                        *ngIf="appointment.status != 'Cancelled' && appointment.status != 'Rejected' && appointment.status != 'Done' && (userRole == 'admin' || userRole == 'patient')"
+                        class="btn btn-success action-btn"
+                        (click)="showActionForm(actionAppointment, appointment.id, 'cancel')">
+                        Cancel appointment
+                    </button>
 
-                    <button class="btn btn-danger action-btn">Check out observation</button>
+                    <!-- Patient, Specialist, Admin -->
+                    <button
+                        *ngIf="appointment.status != 'Cancelled' && appointment.status != 'Rejected' && appointment.status != 'Done'"
+                        class="btn btn-success action-btn"
+                        (click)="showActionForm(actionAppointment, appointment.id, 'reject')">Reject
+                        appointment</button>
+
+                    <!-- Specialist -->
+                    <button *ngIf="appointment.status == 'Pending'" class="btn btn-success action-btn"
+                        (click)="showActionForm(actionAppointment, appointment.id, 'accept')">
+                        Accept appointment
+                    </button>
+
+                    <!-- Specialist -->
+                    <button *ngIf="appointment.status == 'Accepted' && userRole == 'specialist'"
+                        class="btn btn-success action-btn"
+                        (click)="showActionForm(actionAppointment, appointment.id, 'end')">
+                        End appointment
+                    </button>
+
+                    <!-- Specialist -->
+                    <button *ngIf="appointment.status == 'Done'" class="btn btn-success action-btn">Review</button>
+
+                    <!-- Specialist -->
+                    <button *ngIf="appointment.review" class="btn btn-danger action-btn">See review</button>
+
+                    <!-- Solamente debe estar visible si el especialista marcó el turno
+                    como realizado y dejo la reseña. -->
+                    <button *ngIf="appointment.status == 'Done' && appointment.review"
+                        class="btn btn-danger action-btn">Survey</button>
+
+                    <!-- Patient -->
+                    <button *ngIf="appointment.status == 'Done'" class="btn btn-danger action-btn">Leave
+                        calification</button>
                 </td>
             </tr>
-            <!-- <tr *ngFor="let user of appointments$ | async; index as i">
-                <th scope="row">{{ i + 1 }}</th>
-                <td>
-                    <ngb-highlight [result]="user.name + ' ' + user.surname" [term]="filter.value"></ngb-highlight>
-                </td>
-                <td>
-                    <ngb-highlight [result]="user.age | number" [term]="filter.value"></ngb-highlight>
-                </td>
-                <td>
-                    <ngb-highlight [result]="user.email" [term]="filter.value"></ngb-highlight>
-                </td>
-                <td>
-                    <ngb-highlight [result]="user.role" [term]="filter.value"></ngb-highlight>
-                </td>
-                <td>
-                    <button *ngIf="!user.enabled" [disabled]="user.role == 'admin'" (click)="enableUser(user.email)"
-                        class="btn btn-success action-btn">Habilitar</button>
-
-                    <button *ngIf="user.enabled" [disabled]="user.role == 'admin'" (click)="disableUser(user.email)"
-                        class="btn btn-danger action-btn">Deshabilitar</button>
-                </td>
-            </tr> -->
         </tbody>
     </table>
 </div>
+
+<!-- Action forms -->
+<ng-template #actionAppointment>
+    <app-dialog-template [title]="currentAction | titlecase" [isOkButtonEnabled]=" true"
+        (okPressed)="onOkPressed('cancel')">
+        <div>
+            <form [formGroup]="statusForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
+                <label for="reason">Reason</label>
+                <input type="text" name="reason" class="form-control" formControlName="reason" required>
+            </form>
+        </div>
+    </app-dialog-template>
+</ng-template>

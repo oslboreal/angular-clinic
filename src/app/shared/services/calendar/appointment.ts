@@ -1,19 +1,27 @@
 export interface IAppointment {
-    id : string;
+    id: string;
     dateFrom: Date;
     dateTo: Date;
     durationInMinutes: number;
     patientEmail: string;
     specialist: string;
     speciality: string;
-    observation : string;
-    calification : number;
+    observation: string;
+    calification: number;
     status: AppointmentStatus;
-    cancellationReason : string;
+    cancellationReason: string;
+    review : IAppointmentReview;
 }
 
-export enum AppointmentStatus{
+export interface IAppointmentReview {
+    patient: string;
+    review: string;
+}
+
+export enum AppointmentStatus {
     cancelled = "Cancelled",
     rejected = "Rejected",
-    done = "Done"
+    done = "Done",
+    pending = "Pending",
+    accepted = "Accepted"
 }

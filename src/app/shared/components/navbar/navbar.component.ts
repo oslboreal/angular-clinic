@@ -22,7 +22,6 @@ export class NavbarComponent implements OnInit, OnChanges {
 
   public isUserLogged$: Observable<boolean>;
   userRole$: Observable<string>
-
   /* Sign up variables */
 
   constructor(private spinner: NgxSpinnerService, private dialogService: DialogService, private router: Router, private userService: UserService) {
@@ -62,10 +61,8 @@ export class NavbarComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    console.log('navbar Changes');
   }
 
   ngOnInit(): void {
-    // this.spinner.show();
   }
 }

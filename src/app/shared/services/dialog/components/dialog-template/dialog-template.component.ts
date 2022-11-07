@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, Output, Input } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, Output, Input, EventEmitter } from '@angular/core';
 import { DialogEventType, DialogService } from '../../dialog.service';
 
 @Component({
@@ -9,11 +9,11 @@ import { DialogEventType, DialogService } from '../../dialog.service';
 export class DialogTemplateComponent implements OnInit {
 
   @Output() @ViewChild('content') public templateref: TemplateRef<unknown> | undefined = undefined;
-  @Input() title : string = '';
-  @Input() isOkButtonEnabled : Boolean = false;
+  @Output() public okPressed: EventEmitter<boolean> = new EventEmitter();
+  @Input() title: string = '';
+  @Input() isOkButtonEnabled: Boolean = false;
 
   constructor(private dialogService: DialogService) {
-
   }
 
   onCrossMarkPressed() {
@@ -25,7 +25,8 @@ export class DialogTemplateComponent implements OnInit {
   }
 
   onOkButtonPressed() {
-    this.dialogService.setDialog(DialogEventType.ok);
+    this.okPressed.emit(true);
+    // this.dialogService.setDialog(DialogEventType.ok);
   }
 
   ngOnInit(): void {
