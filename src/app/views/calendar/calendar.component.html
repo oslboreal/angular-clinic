@@ -62,13 +62,14 @@
 
                     <!-- Patient, Specialist, Admin -->
                     <button
-                        *ngIf="appointment.status != 'Cancelled' && appointment.status != 'Rejected' && appointment.status != 'Done'"
+                        *ngIf="appointment.status != 'Cancelled' && appointment.status != 'Rejected' && appointment.status != 'Done' && (userRole == 'specialist')"
                         class="btn btn-success action-btn"
                         (click)="showActionForm(actionAppointment, appointment.id, 'reject')">Reject
                         appointment</button>
 
                     <!-- Specialist -->
-                    <button *ngIf="appointment.status == 'Pending'" class="btn btn-success action-btn"
+                    <button *ngIf="appointment.status == 'Pending'  && (userRole == 'specialist')"
+                        class="btn btn-success action-btn"
                         (click)="showActionForm(actionAppointment, appointment.id, 'accept')">
                         Accept appointment
                     </button>
@@ -80,11 +81,12 @@
                         End appointment
                     </button>
 
-                    <!-- Specialist -->
-                    <button *ngIf="appointment.status == 'Done'" class="btn btn-success action-btn">Review</button>
-
-                    <!-- Specialist -->
-                    <button *ngIf="appointment.review" class="btn btn-danger action-btn">See review</button>
+                    <!-- Specialist & Patient -->
+                    <button *ngIf="appointment.review && (userRole == 'specialist' || userRole == 'patient')"
+                        class="btn btn-danger action-btn"
+                        (click)="showActionForm(reviewAppointment, appointment.id, 'see-review', appointment.review)">
+                        See review
+                    </button>
 
                     <!-- Solamente debe estar visible si el especialista marcó el turno
                     como realizado y dejo la reseña. -->
@@ -109,6 +111,32 @@
                 <label for="reason">Reason</label>
                 <input type="text" name="reason" class="form-control" formControlName="reason" required>
             </form>
+        </div>
+    </app-dialog-template>
+</ng-template>
+
+<ng-template #reviewAppointment>
+    <app-dialog-template [title]="'Appointment review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('cancel')">
+        <div>
+            <h2>Review:</h2> <br>
+            {{this.currentAppointmentReview}}
+        </div>
+    </app-dialog-template>
+</ng-template>
+
+<ng-template #calificateAppointment>
+    <app-dialog-template [title]="'Appointment review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('cancel')">
+        <div>
+            TODO : CALIFICATE.
+        </div>
+    </app-dialog-template>
+</ng-template>
+
+
+<ng-template #surveyAppointment>
+    <app-dialog-template [title]="'Appointment review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('cancel')">
+        <div>
+            TODO : SURVEY.
         </div>
     </app-dialog-template>
 </ng-template>

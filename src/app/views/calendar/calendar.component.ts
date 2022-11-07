@@ -15,6 +15,7 @@ export class CalendarComponent implements OnInit {
   public appointments: Observable<IAppointment[]>;
   userRole: string
   currentActionAppointmentId: string = '';
+  public currentAppointmentReview: string = '';
   currentAction: string = '';
 
   /* Form used to set a status to an appointment */
@@ -27,7 +28,8 @@ export class CalendarComponent implements OnInit {
     this.appointments = this.calendar.appointmets$;
   }
 
-  showActionForm(content: TemplateRef<any>, appointmentId: string, action: string) {
+  showActionForm(content: TemplateRef<any>, appointmentId: string, action: string, appointmentReview: string = '') {
+    this.currentAppointmentReview = appointmentReview;
     this.currentActionAppointmentId = appointmentId;
     this.currentAction = action;
     this.dialogService.setDialog(DialogEventType.open, content);
@@ -48,6 +50,9 @@ export class CalendarComponent implements OnInit {
         break;
       case 'end':
         this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, 'Get value from form', AppointmentStatus.done);
+        break;
+      case 'see-review':
+
         break;
     }
   }

@@ -25,8 +25,11 @@ export class DialogTemplateComponent implements OnInit {
   }
 
   onOkButtonPressed() {
+    /* For event subscription via binding */
     this.okPressed.emit(true);
-    // this.dialogService.setDialog(DialogEventType.ok);
+
+    /* Via service */
+    this.dialogService.setDialog(DialogEventType.ok);
   }
 
   ngOnInit(): void {

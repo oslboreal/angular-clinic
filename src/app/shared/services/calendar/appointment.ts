@@ -10,11 +10,6 @@ export interface IAppointment {
     calification: number;
     status: AppointmentStatus;
     cancellationReason: string;
-    review : IAppointmentReview;
-}
-
-export interface IAppointmentReview {
-    patient: string;
     review: string;
 }
 
