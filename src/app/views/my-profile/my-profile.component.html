@@ -1,0 +1,32 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="large" color="#fff" type="ball-scale-multiple" [fullScreen]="false">
+</ngx-spinner>
+<div id="user-info-container">
+    <h1>User profile:</h1>
+    <br>
+    <b>Name: {{(this.currentUser | async)?.name | titlecase}}</b><br>
+    <b>Lastname: {{(this.currentUser | async)?.surname | titlecase}}</b><br>
+    <b>Email: {{(this.currentUser | async)?.email}}</b><br>
+    <b>Role: {{(this.currentUser | async)?.role | titlecase}}</b><br>
+    <b>Age: {{(this.currentUser | async)?.age}}</b>
+    <br>
+    <div>
+        <!-- Image 1 -->
+        <b>First image:</b><br>
+        <img *ngIf="(this.currentUser| async)" alt="" [src]="(this.currentUser| async)?.firstImage"
+            style="height: 3rem;" srcset="">
+    </div>
+    <div>
+        <!-- Image 2 -->
+        <b>Second image:</b><br>
+
+        <img *ngIf="(this.currentUser| async)" [src]="(this.currentUser| async)?.secondImage" style=" height: 3rem;"
+            srcset="">
+    </div>
+</div>
+
+<br>
+<br>
+<div *ngIf="(this.userRole$ |async) == 'specialist'">
+    <h2>Time Availability:</h2>
+    <!-- Marcar disponibilidad horaria: Desde, hasta, especialidad -->
+</div>

@@ -17,7 +17,7 @@ import {
 } from '@angular/fire/auth';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
-import { BehaviorSubject, finalize, forkJoin, from, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, finalize, forkJoin, from, map, Observable, of, take, switchMap } from 'rxjs';
 import { DocumentReference, query, where } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -32,6 +32,8 @@ export class UserService {
   userData: any;
   isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject(false);
   roleAs: BehaviorSubject<string> = new BehaviorSubject('');
+  userEmail: BehaviorSubject<string> = new BehaviorSubject('');
+  currentUser: BehaviorSubject<any> = new BehaviorSubject('');
   verified: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient, private toastr: ToastrService, private router: Router) {
@@ -40,8 +42,10 @@ export class UserService {
         this.userData = user;
         this.isLoggedIn.next(true);
         this.verified.next(user.emailVerified)
+        this.userEmail.next(user.email ?? '');
         this.roleAs.next(localStorage.getItem('role') ?? '')
         localStorage.setItem('user', JSON.stringify(user));
+        this.currentUser.next(user);
       } else {
         this.isLoggedIn.next(false);
         localStorage.removeItem('user');
@@ -137,7 +141,13 @@ export class UserService {
         })
   }
 
-  async getUserImge(email: string) {
+  async getUser(email: string) {
+    let queryEmail = email;
+    if (typeof (email).toString().includes('Observable'))
+      queryEmail = await email;
+
+    console.log(queryEmail);
+
     console.log('Getting user');
 
     let result = this.firestore.collection('users').ref.where('email', '==', email).get().then((querySnapshot) => {

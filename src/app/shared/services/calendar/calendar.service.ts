@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { User } from '../user/user';
-import { IAppointment } from './appointment';
+import { AppointmentStatus, IAppointment } from './appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class CalendarService {
       let testAppointment = {} as IAppointment;
       testAppointment.id = this.getUniqueId(2);
       testAppointment.calification = 4;
-      testAppointment.cancelled = true;
+      testAppointment.status = AppointmentStatus.cancelled;
       testAppointment.cancellationReason = "This is a testing one";
       let dateFrom = new Date();
       testAppointment.dateFrom = dateFrom;
@@ -96,7 +96,7 @@ export class CalendarService {
       /* Cancel appointment */
       this.appointments.map((app) => {
         if (app.id == appointmentId) {
-          app.cancelled = true;
+          app.status = AppointmentStatus.cancelled;
           app.cancellationReason = reason;
         }
       });

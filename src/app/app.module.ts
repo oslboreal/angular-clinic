@@ -43,6 +43,7 @@ import { CalendarComponent } from './views/calendar/calendar.component';
 import { CalendarService } from './shared/services/calendar/calendar.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { NgxCaptchaModule } from 'ngx-captcha';
+import { MyProfileComponent } from './views/my-profile/my-profile.component';
 
 /* Services */
 
@@ -62,6 +63,7 @@ import { NgxCaptchaModule } from 'ngx-captcha';
     UnderConstructionComponent,
     VerificationEmailSentComponent,
     CalendarComponent,
+    MyProfileComponent,
   ],
   imports: [
     BrowserModule,

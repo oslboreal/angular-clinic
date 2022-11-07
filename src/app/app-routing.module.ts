@@ -4,6 +4,7 @@ import { AuthGuard } from './shared/guards/auth.guard';
 import { VerifiedEmailGuard } from './shared/guards/verified-email.guard';
 import { CalendarComponent } from './views/calendar/calendar.component';
 import { LandingPageComponent } from './views/landing-page/landing-page.component';
+import { MyProfileComponent } from './views/my-profile/my-profile.component';
 import { SingUpComponent } from './views/sing-up/sing-up.component';
 import { UnderConstructionComponent } from './views/under-construction/under-construction.component';
 import { UsersComponent } from './views/users/users.component';
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'patients', component: UnderConstructionComponent, canActivate: [VerifiedEmailGuard]},
   { path: 'calendar', component: CalendarComponent /*, canActivate: [VerifiedEmailGuard]*/ },
   { path: 'email-sent', component: VerificationEmailSentComponent },
+  { path: 'profile', component: MyProfileComponent },
   { path: '**', component: LandingPageComponent },
 ];
 

@@ -31,11 +31,10 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
     private spinner: NgxSpinnerService,
     private logger: LoggingService) {
 
-    this.quickAccessAdmin = this.userService.getUserImge('oslboreal@gmail.com');
-    this.quickAccessSpecialist = this.userService.getUserImge('specialist1@vallejo-clinic.utn');
-    this.quickAccessPatient = this.userService.getUserImge('patient1@vallejo-clinic.utn');
+    this.quickAccessAdmin = this.userService.getUser('oslboreal@gmail.com');
+    this.quickAccessSpecialist = this.userService.getUser('nynvmqtohkqdrjpfus@tmmbt.net');
+    this.quickAccessPatient = this.userService.getUser('patient1@vallejo-clinic.utn');
   }
-
 
   ngOnChanges(): void {
 
@@ -90,7 +89,12 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
       let email = 'oslboreal' + defaultEmailDomain;
       this.loginForm.controls.email.setValue(email);
       this.loginForm.controls.password.setValue('userTesting');
-    } else {
+    } else if (role == 'specialist') {
+      let email = 'nynvmqtohkqdrjpfus@tmmbt.net';
+      this.loginForm.controls.email.setValue(email);
+      this.loginForm.controls.password.setValue('testingUser');
+    }
+    else {
       let defaultEmailDomain = '@vallejo-clinic.utn';
       let email = role;
       email += id + defaultEmailDomain;

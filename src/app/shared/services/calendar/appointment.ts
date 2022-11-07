@@ -8,6 +8,12 @@ export interface IAppointment {
     speciality: string;
     observation : string;
     calification : number;
-    cancelled: boolean;
+    status: AppointmentStatus;
     cancellationReason : string;
+}
+
+export enum AppointmentStatus{
+    cancelled = "Cancelled",
+    rejected = "Rejected",
+    done = "Done"
 }

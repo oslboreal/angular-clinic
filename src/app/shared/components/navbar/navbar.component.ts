@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit, OnChanges {
     this.userRole$ = this.userService.roleAs.asObservable();
 
     this.isUserLogged$.subscribe(x => {
-      spinner.hide();
+      // spinner.hide();
     })
   }
 
@@ -66,6 +66,6 @@ export class NavbarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.spinner.show();
+    // this.spinner.show();
   }
 }
