@@ -50,7 +50,7 @@
                     {{appointment.status}}
                 </td>
                 <td>
-                    {{appointment.cancellationReason}}
+                    {{appointment.cancellationReason ?? '-'}}
                 </td>
                 <td>
                     <button
@@ -90,12 +90,17 @@
 
                     <!-- Solamente debe estar visible si el especialista marcó el turno
                     como realizado y dejo la reseña. -->
-                    <button *ngIf="appointment.status == 'Done' && appointment.review"
-                        class="btn btn-danger action-btn">Survey</button>
+                    <button *ngIf="appointment.status == 'Done' && appointment.review && userRole == 'patient'"
+                        class="btn btn-danger action-btn"
+                        (click)="showActionForm(surveyAppointment, appointment.id, 'survey')">
+                        Survey
+                    </button>
 
                     <!-- Patient -->
-                    <button *ngIf="appointment.status == 'Done'" class="btn btn-danger action-btn">Leave
-                        calification</button>
+                    <button *ngIf="appointment.status == 'Done' && userRole == 'patient'"
+                        class="btn btn-danger action-btn"
+                        (click)="showActionForm(calificateAppointment, appointment.id, 'calification', '', appointment.calification, appointment.calificationComment)">
+                        Calification</button>
                 </td>
             </tr>
         </tbody>
@@ -105,12 +110,14 @@
 <!-- Action forms -->
 <ng-template #actionAppointment>
     <app-dialog-template [title]="currentAction | titlecase" [isOkButtonEnabled]=" true"
-        (okPressed)="onOkPressed('cancel')">
+        (okPressed)="onOkPressed(this.currentAction)">
         <div>
-            <form [formGroup]="statusForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
+            <form *ngIf="this.currentAction != 'accept'" [formGroup]="statusForm" style="width: 20rem;"
+                (ngSubmit)="onSubmit()">
                 <label for="reason">Reason</label>
                 <input type="text" name="reason" class="form-control" formControlName="reason" required>
             </form>
+            <div *ngIf="this.currentAction == 'accept'">Do you want to accept the appointment?</div>
         </div>
     </app-dialog-template>
 </ng-template>
@@ -125,9 +132,18 @@
 </ng-template>
 
 <ng-template #calificateAppointment>
-    <app-dialog-template [title]="'Appointment review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('cancel')">
-        <div>
-            TODO : CALIFICATE.
+    <app-dialog-template [title]="'Appointment calification'" [isOkButtonEnabled]=" true"
+        (okPressed)="onOkPressed('calificate')">
+        <div style="text-align:center;">
+            <ngb-rating [(rate)]="selected" (hover)="hovered=$event" (leave)="hovered=0"
+                [readonly]="currentAppointmentCalification != undefined">
+            </ngb-rating>
+            <hr />
+
+            <form [formGroup]="calificationForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
+                <label for="comment">Comments</label>
+                <input type="text" name="comment" class="form-control" formControlName="comment" required>
+            </form>
         </div>
     </app-dialog-template>
 </ng-template>

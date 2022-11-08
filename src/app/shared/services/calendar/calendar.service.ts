@@ -109,7 +109,7 @@ export class CalendarService {
     // }
   }
 
-  changeAppointmentStatus(appointmentId: string, reason: string, status: AppointmentStatus): Observable<boolean> {
+  changeAppointmentStatus(appointmentId: string, reason: string, status: AppointmentStatus, appointmentReview: string = ''): Observable<boolean> {
     try {
       this.appointments = this.getAppointmentsFromLocalStorage();
 
@@ -117,6 +117,7 @@ export class CalendarService {
       this.appointments.map((app) => {
         if (app.id == appointmentId) {
           app.status = status;
+          app.review = appointmentReview;
           app.cancellationReason = reason;
         }
       });
@@ -141,18 +142,22 @@ export class CalendarService {
   }
 
   // Set calification for an appointment.
-  calificateAppointment(appointmentId: string, calification: number) {
+  calificateAppointment(appointmentId: string, calification: number, comment : string) {
     this.appointments = this.getAppointmentsFromLocalStorage();
 
     /* Calificate appointment */
     this.appointments.map((app) => {
       if (app.id == appointmentId) {
         app.calification = calification;
+        app.calificationComment = comment;
       }
     });
 
     /* Persists changes */
     this.setLocalStorage(this.appointments);
+
+    /* Emit apointments */
+    this.appointmets$.next(this.appointments);
   }
 
   /* Local storage management */

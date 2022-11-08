@@ -101,8 +101,8 @@ export class UserService {
                     credential.user?.updateProfile({ displayName: user.name, photoURL: user.firstImage })
                     emailVerificationPromise?.then(() => this.router.navigateByUrl('/email-sent'));
                   }
+                  return from(this.firestore.collection<User>('users').add(user));
                 })
-              return from(this.firestore.collection<User>('users').add(user));
             })
         })
       );

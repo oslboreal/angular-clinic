@@ -12,15 +12,30 @@ import { UserService } from 'src/app/shared/services/user/user.service';
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
+  selected = 0;
+  hovered = 0;
+  readonly = false;
+
   public appointments: Observable<IAppointment[]>;
   userRole: string
   currentActionAppointmentId: string = '';
   public currentAppointmentReview: string = '';
-  currentAction: string = '';
+  public currentAppointmentCalification: number | undefined = undefined;
+  public currentAction: string = '';
+  public currentAppointmentCalificationComment: string = '';
 
   /* Form used to set a status to an appointment */
   statusForm = this.formBuilder.group({
     reason: ['']
+  });
+
+  calificationForm = this.formBuilder.group({
+    comment: ['']
+  });
+
+  surveyForm = this.formBuilder.group({
+    wasGoodExperience: [''],
+    wouldYouRecommendService: [''],
   });
 
   constructor(private formBuilder: FormBuilder, private calendar: CalendarService, private userService: UserService, private dialogService: DialogService) {
@@ -28,9 +43,22 @@ export class CalendarComponent implements OnInit {
     this.appointments = this.calendar.appointmets$;
   }
 
-  showActionForm(content: TemplateRef<any>, appointmentId: string, action: string, appointmentReview: string = '') {
+  showActionForm(content: TemplateRef<any>, appointmentId: string, action: string, appointmentReview: string = '', calification: number | undefined = undefined, calificationComment: string = '') {
+    if (calification != undefined) {
+      this.currentAppointmentCalification = calification;
+      this.selected = calification;
+    }
+
+    if (calificationComment != '') {
+      this.calificationForm.controls.comment.setValue(calificationComment);
+      this.calificationForm.controls.comment.disable();
+    }
+
+    this.currentAppointmentCalificationComment = calificationComment;
+
     this.currentAppointmentReview = appointmentReview;
     this.currentActionAppointmentId = appointmentId;
+
     this.currentAction = action;
     this.dialogService.setDialog(DialogEventType.open, content);
   }
@@ -38,21 +66,27 @@ export class CalendarComponent implements OnInit {
   onOkPressed(action: string) {
     console.log('Ok pressed on Calendar');
     switch (action) {
-      // TODO : REASON FROM FORM
       case 'cancel':
-        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, 'Get value from form', AppointmentStatus.cancelled);
+        console.log('Appointment cancelled');
+        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, this.statusForm.controls.reason.value ?? '', AppointmentStatus.cancelled);
         break;
       case 'reject':
-        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, 'Get value from form', AppointmentStatus.rejected);
+        console.log('Appointment rejected');
+        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, this.statusForm.controls.reason.value ?? '', AppointmentStatus.rejected);
         break;
       case 'accept':
-        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, 'Get value from form', AppointmentStatus.accepted);
+        console.log('Appointment accepted');
+        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, '', AppointmentStatus.accepted);
         break;
       case 'end':
-        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, 'Get value from form', AppointmentStatus.done);
+        console.log('Appointment done');
+        this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, '', AppointmentStatus.done, this.statusForm.controls.reason.value ?? 'No comments were added by the specialist.');
         break;
       case 'see-review':
 
+        break;
+      case 'calificate':
+        this.calendar.calificateAppointment(this.currentActionAppointmentId, this.selected, this.calificationForm.controls.comment.value ?? 'No comment was left');
         break;
     }
   }

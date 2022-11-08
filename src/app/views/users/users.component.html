@@ -46,7 +46,7 @@
     </table>
 
     <ng-template #form>
-        <app-dialog-template [title]="'Create admin'" [isOkButtonEnabled]="true">
+        <app-dialog-template [title]="'Create admin'" [isOkButtonEnabled]="true" (okPressed)="onOkPressed($event)">
             <form [formGroup]="adminForm" style="width: 20rem;" (ngSubmit)="onSubmit()">
                 <div class="form-group" fxLayout="column" fxLayoutAlign="space-between start">
                     <label for="name">First name</label>

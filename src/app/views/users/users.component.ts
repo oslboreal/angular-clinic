@@ -50,13 +50,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.userService.disableUser(email);
   }
 
-  onModalActionTaken(action: DialogEventType | undefined) {
-    /* Submit action sent */
-    if (action == DialogEventType.ok) {
-      this.onSubmit();
-    }
-  }
-
   onSubmit() {
     console.log(this.adminForm.value);
 
@@ -73,7 +66,6 @@ export class UsersComponent implements OnInit, OnDestroy {
         () => { this.toastr.success('Admin created successfully...'); }
       )
     }
-    this.dialogService.actionTaken.unsubscribe();
   }
 
   onFileSelected(event: any, imageNumber: number) {
@@ -81,6 +73,10 @@ export class UsersComponent implements OnInit, OnDestroy {
     const file = event.target.files[0];
 
     this.imageBlob = file;
+  }
+
+  onOkPressed(event: any) {
+    this.onSubmit();
   }
 
   showForm(content: TemplateRef<any>) {
@@ -99,6 +95,5 @@ export class UsersComponent implements OnInit, OnDestroy {
       console.log('called');
       this.spinner.hide();
     });
-    this.dialogService.actionTaken.subscribe((action) => this.onModalActionTaken(action))
   }
 }

@@ -11,6 +11,7 @@ export interface IAppointment {
     status: AppointmentStatus;
     cancellationReason: string;
     review: string;
+    calificationComment: string;
 }
 
 export enum AppointmentStatus {
