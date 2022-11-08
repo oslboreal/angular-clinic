@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from '../user/user';
-import { AppointmentStatus, IAppointment } from './appointment';
+import { AppointmentStatus, IAppointment, ISurvey } from './appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,29 +11,31 @@ export class CalendarService {
   private appointments: IAppointment[];
   appointmets$: BehaviorSubject<IAppointment[]> = new BehaviorSubject<IAppointment[]>([]);
 
-  constructor() {
+  constructor(private toastr: ToastrService) {
     this.appointments = this.getAppointmentsFromLocalStorage();
 
     /* Adding appointment for testing */
     if (this.appointments.length == 0) {
       let patientTestAppointment = {} as IAppointment;
       patientTestAppointment.id = this.getUniqueId(2);
-      patientTestAppointment.calification = 4;
+      // patientTestAppointment.calification = 4;
       patientTestAppointment.status = AppointmentStatus.pending;
-      patientTestAppointment.cancellationReason = "This is a testing one";
+      patientTestAppointment.cancellationReason = "";
       let dateFrom = new Date();
       patientTestAppointment.dateFrom = dateFrom;
       dateFrom.setMinutes(dateFrom.getMinutes() + 5);
       patientTestAppointment.dateTo = dateFrom; // Five minutes were added for testing purposes.
       patientTestAppointment.observation = "He's gonna die :(";
       patientTestAppointment.patientEmail = "patient1@vallejo-clinic.utn";
-      patientTestAppointment.specialist = "nynvmqtohkqdrjpfus@tmmbt.net";
+      patientTestAppointment.patientName = "Patient 1 name";
+      patientTestAppointment.specialistEmail = "nynvmqtohkqdrjpfus@tmmbt.net";
+      patientTestAppointment.specialistName = "Specialist One";
       patientTestAppointment.speciality = "Dentist"
       this.appointments.push(patientTestAppointment);
 
       let adminTestAppointment = {} as IAppointment;
       adminTestAppointment.id = this.getUniqueId(2);
-      adminTestAppointment.calification = 4;
+      // adminTestAppointment.calification = 4;
       adminTestAppointment.status = AppointmentStatus.cancelled;
       adminTestAppointment.cancellationReason = "This is a testing one";
       dateFrom = new Date();
@@ -41,7 +44,9 @@ export class CalendarService {
       adminTestAppointment.dateTo = dateFrom; // Five minutes were added for testing purposes.
       adminTestAppointment.observation = "He's gonna die :(";
       adminTestAppointment.patientEmail = "patient1@vallejo-clinic.utn";
-      adminTestAppointment.specialist = "nynvmqtohkqdrjpfus@tmmbt.net";
+      adminTestAppointment.patientName = "Patient 1 name";
+      adminTestAppointment.specialistEmail = "nynvmqtohkqdrjpfus@tmmbt.net";
+      adminTestAppointment.specialistName = "Specialist One";
       adminTestAppointment.speciality = "Dentist"
       this.appointments.push(adminTestAppointment);
 
@@ -83,7 +88,7 @@ export class CalendarService {
           return x.patientEmail == email;
         } else {
           // Specialist.
-          return x.specialist == email;
+          return x.specialistEmail == email;
         }
       });
     } catch (error) {
@@ -141,8 +146,32 @@ export class CalendarService {
     return filtered[0]?.observation;
   }
 
+  // sendSurvey(this.currentActionAppointmentId, this.surveyForm.controls.wasGoodExperience.value, this.surveyForm.controls.wouldYouRecommendService.value);
+  sendSurvey(appointmentId: string, wasGoodExperience: any, wouldYouRecommendService: any) {
+    console.log('Sending survey:');
+    console.log('Was a good experience? ' + wasGoodExperience);
+    console.log('Would you recommend? ' + wouldYouRecommendService);
+
+    this.appointments = this.getAppointmentsFromLocalStorage();
+
+    /* Calificate appointment */
+    this.appointments.map((app) => {
+      if (app.id == appointmentId) {
+        app.survey = { wasGoodExperience: wasGoodExperience, wouldYouRecommendService: wouldYouRecommendService } as ISurvey;
+      }
+    });
+
+    /* Persists changes */
+    this.setLocalStorage(this.appointments);
+
+    /* Emit apointments */
+    this.appointmets$.next(this.appointments);
+
+    this.toastr.success('Survey sent.');
+  }
+
   // Set calification for an appointment.
-  calificateAppointment(appointmentId: string, calification: number, comment : string) {
+  calificateAppointment(appointmentId: string, calification: number, comment: string) {
     this.appointments = this.getAppointmentsFromLocalStorage();
 
     /* Calificate appointment */
@@ -158,6 +187,8 @@ export class CalendarService {
 
     /* Emit apointments */
     this.appointmets$.next(this.appointments);
+
+    this.toastr.success('Appointment calificated.');
   }
 
   /* Local storage management */

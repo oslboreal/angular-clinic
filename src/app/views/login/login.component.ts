@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy, OnChanges {
 
   onModalActionTaken(action: DialogEventType | undefined) {
     /* Submit action sent */
-    if (action == DialogEventType.ok) {
+    if (action == DialogEventType.ok && !this.userService.isLoggedIn.getValue()) {
       this.onSubmit();
     }
   }

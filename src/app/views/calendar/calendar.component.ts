@@ -34,13 +34,51 @@ export class CalendarComponent implements OnInit {
   });
 
   surveyForm = this.formBuilder.group({
-    wasGoodExperience: [''],
     wouldYouRecommendService: [''],
+    wasGoodExperience: [''],
+  });
+
+  filterForm = this.formBuilder.group({
+    speciality: [''],
+    patient: [''],
+    specialist: [''],
   });
 
   constructor(private formBuilder: FormBuilder, private calendar: CalendarService, private userService: UserService, private dialogService: DialogService) {
     this.userRole = localStorage.getItem('role') ?? 'guest';
     this.appointments = this.calendar.appointmets$;
+
+    /* Filtering logic */
+    this.filterForm.valueChanges.subscribe(ext => {
+
+      console.log(this.filterForm.controls);
+
+      let isFilteringSpecialist = this.filterForm.controls.specialist.value != '';
+      let isFilteringPatient = this.filterForm.controls.patient.value != '';
+      let isFilteringSpeciality = this.filterForm.controls.speciality.value != '';
+
+      if (isFilteringSpecialist || isFilteringPatient || isFilteringSpeciality) {
+        console.log('Filtering calendar');
+        let appointments = this.calendar.getUserAppointments();
+
+        if (appointments) {
+          console.log(appointments);
+
+          if (isFilteringPatient)
+            appointments = appointments.filter(x => x.patientName?.toLocaleLowerCase().includes(this.filterForm.controls.patient.value?.toLocaleLowerCase() ?? ''))
+
+          if (isFilteringSpecialist)
+            appointments = appointments.filter(x => x.specialistName.toLocaleLowerCase().includes(this.filterForm.controls.specialist.value?.toLocaleLowerCase() ?? ''))
+
+          if (isFilteringSpeciality)
+            appointments = appointments.filter(x => x.speciality.toLocaleLowerCase().includes(this.filterForm.controls.speciality.value?.toLocaleLowerCase() ?? ''))
+        }
+
+        this.calendar.appointmets$.next(appointments);
+      } else {
+        this.calendar.appointmets$.next(this.calendar.getUserAppointments());
+      }
+    })
   }
 
   showActionForm(content: TemplateRef<any>, appointmentId: string, action: string, appointmentReview: string = '', calification: number | undefined = undefined, calificationComment: string = '') {
@@ -82,8 +120,8 @@ export class CalendarComponent implements OnInit {
         console.log('Appointment done');
         this.calendar.changeAppointmentStatus(this.currentActionAppointmentId, '', AppointmentStatus.done, this.statusForm.controls.reason.value ?? 'No comments were added by the specialist.');
         break;
-      case 'see-review':
-
+      case 'survey':
+        this.calendar.sendSurvey(this.currentActionAppointmentId, this.surveyForm.controls.wouldYouRecommendService.value , this.surveyForm.controls.wasGoodExperience.value);
         break;
       case 'calificate':
         this.calendar.calificateAppointment(this.currentActionAppointmentId, this.selected, this.calificationForm.controls.comment.value ?? 'No comment was left');

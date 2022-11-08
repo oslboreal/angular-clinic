@@ -166,6 +166,8 @@ export class UserService {
     this.roleAs.next('');
     this.verified.next(false);
     this.isLoggedIn.next(false);
+    this.userData = undefined;
+    this.currentUser.next(undefined)
   }
 
   enableUser(email: string) {

@@ -4,7 +4,9 @@ export interface IAppointment {
     dateTo: Date;
     durationInMinutes: number;
     patientEmail: string;
-    specialist: string;
+    patientName: string;
+    specialistEmail: string;
+    specialistName: string;
     speciality: string;
     observation: string;
     calification: number;
@@ -12,6 +14,12 @@ export interface IAppointment {
     cancellationReason: string;
     review: string;
     calificationComment: string;
+    survey: ISurvey;
+}
+
+export interface ISurvey {
+    wasGoodExperience: boolean,
+    wouldYouRecommendService: boolean
 }
 
 export enum AppointmentStatus {

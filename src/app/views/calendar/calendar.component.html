@@ -3,21 +3,27 @@
 <div id="calendar-container">
     <form>
         <div class="row mb-3">
-            <div class="mb-3 col">
-                <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Specialist:</label>
-                <div class="col-xs-3 col-sm-auto">
-                    <input id="table-filtering-search" class="form-control" type="text" />
-                </div>
-            </div>
-            <div class="mb-3 col">
-                <label for="table-filtering-search" class="col-xs-3 col-sm-auto col-form-label">Speciality:</label>
-                <div class="col-xs-3 col-sm-auto">
-                    <input id="table-filtering-search" class="form-control" type="text" />
-                </div>
-            </div>
+            <form [formGroup]="filterForm" style="" (ngSubmit)="onSubmit()">
+                <label for="speciality">Speciality</label>
+                <input type="text" name="speciality" class="form-control" formControlName="speciality" required>
+
+                <label *ngIf="userRole == 'patient' || userRole == 'admin'" for="specialist">Specialist</label>
+                <input *ngIf="userRole == 'patient' || userRole == 'admin'" type="text" name="specialist"
+                    class="form-control" formControlName="specialist" required>
+
+                <label *ngIf="userRole == 'specialist'" for="patient">Patient</label>
+                <input *ngIf="userRole == 'specialist'" type="text" name="patient" class="form-control"
+                    formControlName="patient" required>
+            </form>
         </div>
     </form>
-    <div fxLayout="column"><button class="btn btn-dark">ADD APPOINTMENT</button></div> <!-- Patient and Admin -->
+    <!-- Patient and Admin - ADD APPOINTMENT -->
+    <div *ngIf="userRole == 'admin' || userRole == 'patient'" fxLayout="column">
+        <button class="btn btn-dark" (click)="showActionForm(createAppointment, '', 'create')">
+            ADD APPOINTMENT
+        </button>
+    </div>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -25,6 +31,7 @@
                 <th scope="col">Date from</th>
                 <th scope="col">Date to</th>
                 <th scope="col">Specialist</th>
+                <th scope="col">Speciality</th>
                 <th scope="col">Patient</th>
                 <th scope="col">Status</th>
                 <th scope="col">Reason</th>
@@ -41,10 +48,13 @@
                     {{appointment.dateTo}}
                 </td>
                 <td>
-                    {{appointment.specialist}}
+                    {{appointment.specialistName}}
                 </td>
                 <td>
-                    {{appointment.patientEmail}}
+                    {{appointment.speciality}}
+                </td>
+                <td>
+                    {{appointment.patientName}}
                 </td>
                 <td>
                     {{appointment.status}}
@@ -90,7 +100,8 @@
 
                     <!-- Solamente debe estar visible si el especialista marcó el turno
                     como realizado y dejo la reseña. -->
-                    <button *ngIf="appointment.status == 'Done' && appointment.review && userRole == 'patient'"
+                    <button
+                        *ngIf="appointment.status == 'Done' && appointment.review && userRole == 'patient' && !appointment.survey"
                         class="btn btn-danger action-btn"
                         (click)="showActionForm(surveyAppointment, appointment.id, 'survey')">
                         Survey
@@ -123,7 +134,7 @@
 </ng-template>
 
 <ng-template #reviewAppointment>
-    <app-dialog-template [title]="'Appointment review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('cancel')">
+    <app-dialog-template [title]="'Review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('')">
         <div>
             <h2>Review:</h2> <br>
             {{this.currentAppointmentReview}}
@@ -132,8 +143,7 @@
 </ng-template>
 
 <ng-template #calificateAppointment>
-    <app-dialog-template [title]="'Appointment calification'" [isOkButtonEnabled]=" true"
-        (okPressed)="onOkPressed('calificate')">
+    <app-dialog-template [title]="'Calificate'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('calificate')">
         <div style="text-align:center;">
             <ngb-rating [(rate)]="selected" (hover)="hovered=$event" (leave)="hovered=0"
                 [readonly]="currentAppointmentCalification != undefined">
@@ -150,9 +160,39 @@
 
 
 <ng-template #surveyAppointment>
-    <app-dialog-template [title]="'Appointment review'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('cancel')">
+    <app-dialog-template [title]="'Survey'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('survey')">
         <div>
-            TODO : SURVEY.
+            <form [formGroup]="surveyForm">
+                <h3>Was a good experience?</h3>
+                <label>
+                    <input type="radio" [value]="true" formControlName="wasGoodExperience">
+                    <span>Yes</span>
+                </label>
+                <label>
+                    <input type="radio" [value]="false" formControlName="wasGoodExperience">
+                    <span>No</span>
+                </label>
+                <br>
+                <br>
+                <h3>Would you recommend our service?</h3>
+                <label>
+                    <input type="radio" [value]="true" formControlName="wouldYouRecommendService">
+                    <span>Yes</span>
+                </label>
+                <label>
+                    <input type="radio" [value]="false" formControlName="wouldYouRecommendService">
+                    <span>No</span>
+                </label>
+            </form>
+        </div>
+    </app-dialog-template>
+</ng-template>
+
+
+<ng-template #createAppointment>
+    <app-dialog-template [title]="'Create'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('create')">
+        <div>
+            TODO : CREATE APPOINTMENT.
         </div>
     </app-dialog-template>
 </ng-template>

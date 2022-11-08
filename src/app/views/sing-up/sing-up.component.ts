@@ -79,6 +79,8 @@ export class SingUpComponent implements OnInit, OnDestroy {
     } else {
       let user: User = this.userForm.value as User;
       user.role = this.selectedCard;
+      console.log(this.selectedCard);
+
       user.firstImage = this.firstImageBlob;
       user.secondImage = this.secondImageBlob;
       this.userService.createUser(user, true).subscribe(
@@ -108,7 +110,7 @@ export class SingUpComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleSuccess(data : any) {
+  handleSuccess(data: any) {
     console.log(data);
   }
 
