@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from './user';
+import { ITimeAvailability, User } from './user';
 import {
   AngularFirestore,
   AngularFirestoreCollection,
@@ -151,9 +151,13 @@ export class UserService {
     console.log('Getting user');
 
     let result = this.firestore.collection('users').ref.where('email', '==', email).get().then((querySnapshot) => {
-      let data;
-      data = querySnapshot.docs[0].data() as User;
-      return data;
+      let data: any = querySnapshot.docs[0].data();
+
+      /* I'm storing a JSON so I don't need to create a new collection to store the referenced object */
+      data.timeAvailability = JSON.parse(data.timeAvailability);
+
+      let user = data as User;
+      return user;
     }).catch((error) => {
       console.log('Error getting user');
     });
@@ -176,6 +180,16 @@ export class UserService {
       result.forEach(user => {
         let userRef = this.firestore.collection('users').doc(user.id);
         return userRef.update({ enabled: true });
+      });
+    });
+  }
+
+  updateOrAddUserAvailability(slots: ITimeAvailability[]) {
+    let record$ = from(this.firestore.collection('users').ref.where('email', '==', this.userEmail.getValue()).get());
+    record$.subscribe(result => {
+      result.forEach(user => {
+        let userRef = this.firestore.collection('users').doc(user.id);
+        return userRef.update({ timeAvailability: JSON.stringify(slots) });
       });
     });
   }

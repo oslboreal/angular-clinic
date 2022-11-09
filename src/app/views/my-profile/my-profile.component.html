@@ -30,4 +30,68 @@
     <h2>Time Availability:</h2>
     <!-- Marcar disponibilidad horaria: Desde, hasta, especialidad -->
     <!-- Especialidad -> Disponibilidad (Horario desde - Horario hasta) -->
+
+    <!-- Time availability for existing specialities (both, main and extra especialities...) -->
+    <div *ngFor="let slot of timeAvailability | async index as i">
+        <hr>
+        <div>
+            {{slot.speciality}}
+            <span *ngIf="slot.timeFrom else notAvailable">
+                - {{slot.timeFrom.hours}}hs to
+                {{slot.timeTo.hours}}hs - <button class="btn btn-dark"
+                    (click)="onAddTimeAvailability(setAvailability, i, slot.speciality)">Update time
+                    availability.</button>
+            </span>
+        </div>
+        <ng-template #notAvailable>
+            - Time was not set - <button class="btn btn-dark"
+                (click)="onAddTimeAvailability(setAvailability, i, slot.speciality)">Set
+                time availability.</button>
+        </ng-template>
+
+    </div>
+
 </div>
+
+<ng-template #setAvailability>
+    <app-dialog-template [title]="'Set availability'" [isOkButtonEnabled]=" true"
+        (okPressed)="onOkPressed('availability')">
+        <div>
+            <form [formGroup]="availabilityForm">
+                Speciality: {{'TODO'}}
+                <br>
+                <select class="custom-select" id="from" formControlName="from" aria-label="Select time from">
+                    <option selected>Choose from...</option>
+                    <option value="8">8:00</option>
+                    <option value="9">9:00</option>
+                    <option value="10">10:00</option>
+                    <option value="11">11:00</option>
+                    <option value="12">12:00</option>
+                    <option value="13">13:00</option>
+                    <option value="14">14:00</option>
+                    <option value="15">15:00</option>
+                    <option value="16">16:00</option>
+                    <option value="17">17:00</option>
+                    <option value="18">18:00</option>
+                    <option value="19">19:00</option>
+                </select>
+
+                <select class="custom-select" id="inputGroupSelect03" formControlName="to" aria-label="Select time to">
+                    <option selected>Choose to...</option>
+                    <option value="8">8:00</option>
+                    <option value="9">9:00</option>
+                    <option value="10">10:00</option>
+                    <option value="11">11:00</option>
+                    <option value="12">12:00</option>
+                    <option value="13">13:00</option>
+                    <option value="14">14:00</option>
+                    <option value="15">15:00</option>
+                    <option value="16">16:00</option>
+                    <option value="17">17:00</option>
+                    <option value="18">18:00</option>
+                    <option value="19">19:00</option>
+                </select>
+            </form>
+        </div>
+    </app-dialog-template>
+</ng-template>
