@@ -154,7 +154,8 @@ export class UserService {
       let data: any = querySnapshot.docs[0].data();
 
       /* I'm storing a JSON so I don't need to create a new collection to store the referenced object */
-      data.timeAvailability = JSON.parse(data.timeAvailability);
+      if (data.role == 'specialist')
+        data.timeAvailability = JSON.parse(data.timeAvailability);
 
       let user = data as User;
       return user;

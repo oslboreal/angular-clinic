@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from '../user/user';
+import { UserService } from '../user/user.service';
 import { AppointmentStatus, IAppointment, ISurvey } from './appointment';
 
 @Injectable({
@@ -10,9 +11,43 @@ import { AppointmentStatus, IAppointment, ISurvey } from './appointment';
 export class CalendarService {
   private appointments: IAppointment[];
   appointmets$: BehaviorSubject<IAppointment[]> = new BehaviorSubject<IAppointment[]>([]);
+  specialities$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  specialists$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
+  patients$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
 
-  constructor(private toastr: ToastrService) {
+  constructor(private toastr: ToastrService, private userService: UserService) {
     this.appointments = this.getAppointmentsFromLocalStorage();
+
+    /* Get users */
+    this.userService.getUsers().subscribe(next => {
+      /* Get specialists */
+      let specialists = next.filter(x => x.role == 'specialist');
+      this.specialists$.next(specialists);
+
+      /* Get patients */
+      this.patients$.next(next.filter(x => x.role == 'patient'));
+
+      let specialities: string[] = [];
+
+      specialists.forEach(specialist => {
+        /* Adds main specialities dinamically */
+        if (specialities.filter(x => x == specialist.speciality).length == 0) {
+          specialities.push(specialist.speciality);
+        }
+
+        /* Adds extra especialities */
+        specialist.extraSpecialities.forEach(extraSpeciality => {
+          if (specialities.filter(x => x == extraSpeciality).length == 0) {
+            specialities.push(extraSpeciality);
+          }
+        });
+      });
+
+      /* Loads all the existing specialitis */
+      this.specialities$.next(specialities);
+    })
+
+    /* Set specialities */
 
     /* Adding appointment for testing */
     if (this.appointments.length == 0) {
@@ -103,15 +138,10 @@ export class CalendarService {
     appointment.id = this.getUniqueId(2);
 
     /* Persists the current state */
-    // if(this.isAppointmentSlotAvailableForPatient()){
     // Create appointment
     this.appointments.push(appointment);
     this.setLocalStorage(this.appointments);
-    // }else
-    // {
-    // Otherwise show Toastr.
-    // this.toastr.error('Got an error creating an appointment.')
-    // }
+    this.appointmets$.next(this.appointments);
   }
 
   changeAppointmentStatus(appointmentId: string, reason: string, status: AppointmentStatus, appointmentReview: string = ''): Observable<boolean> {
@@ -203,7 +233,7 @@ export class CalendarService {
     return JSON.parse(storedVal ?? '[]');
   }
 
-  private getUniqueId(parts: number): string {
+  public getUniqueId(parts: number): string {
     const stringArr = [];
     for (let i = 0; i < parts; i++) {
       // tslint:disable-next-line:no-bitwise
