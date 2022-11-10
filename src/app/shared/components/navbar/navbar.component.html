@@ -10,6 +10,7 @@
             <!-- Site title -->
             <h1 class="clickeable" (click)="redirectTo('/home')">Clinic</h1>
             <div class="vertical-line"></div>
+            
             <button *ngIf="(isUserLogged$ | async) && isUserAdmin()" style="text-decoration: none;" type="button"
                 class="btn" [ngClass]="isCurrentPath('/users')" (click)="redirectTo('/users')">Users</button>
 

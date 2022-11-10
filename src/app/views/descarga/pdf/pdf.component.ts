@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import * as  pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+var pdfMake = require('pdfmake/build/pdfmake.js');
+var pdfFonts = require('pdfmake/build/vfs_fonts.js');
+pdfMake.vfs = pdfFonts.pdfMake.vfs;
 import { UserService } from 'src/app/shared/services/user/user.service';
-
-
 
 @Component({
   selector: 'app-pdf',
