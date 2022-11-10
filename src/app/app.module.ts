@@ -44,6 +44,9 @@ import { CalendarService } from './shared/services/calendar/calendar.service';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { NgxCaptchaModule } from 'ngx-captcha';
 import { MyProfileComponent } from './views/my-profile/my-profile.component';
+import { HistorialComponent } from './views/historial/historial.component';
+import { AltaHistoriaComponent } from './views/components/alta-historia/alta-historia.component';
+import { PdfComponent } from './views/descarga/pdf/pdf.component';
 
 /* Services */
 
@@ -64,6 +67,9 @@ import { MyProfileComponent } from './views/my-profile/my-profile.component';
     VerificationEmailSentComponent,
     CalendarComponent,
     MyProfileComponent,
+    HistorialComponent,
+    AltaHistoriaComponent,
+    PdfComponent
   ],
   imports: [
     BrowserModule,

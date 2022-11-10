@@ -1,0 +1,28 @@
+<form >
+
+    <label for="altura">Altura</label>
+    <input type="number" name="altura" class="form-control" formControlName="altura">
+
+    <label for="peso">Peso</label>
+    <input type="number" name="peso" class="form-control" formControlName="peso">
+
+    <label for="presion">Presion</label>
+    <input type="number" name="presion" class="form-control" formControlName="presion">
+
+    <label for="temperatura">Temperatura</label>
+    <input type="number" name="temperatura" class="form-control" formControlName="temperatura">
+
+    <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label">Extras:</label>
+        <div class="col-sm-9" formArrayName="favoritos">
+            <div class="input-group mb-1"
+                *ngFor="let favorito of favoritosArr.controls; let i = index">
+    
+                  <input disabled value="{{favorito.value.value}}" class="form-control">
+                  <input disabled value="{{favorito.value.key}}" class="form-control">
+            </div>
+    
+        </div>
+    </div>
+
+</form>

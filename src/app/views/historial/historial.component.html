@@ -1,0 +1,50 @@
+<button style="margin-left: 1rem;" type="button" class="btn btn-clinic-secondary"
+    (click)="showLoginForm(altaHistoria)">Log In</button>
+
+<ng-template #altaHistoria>
+    <app-dialog-template [title]="'Login'" [isOkButtonEnabled]="true">
+        <app-alta-historia></app-alta-historia>
+    </app-dialog-template>
+</ng-template>
+
+<div class="container text-center">
+    <div class="row">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Fullname</th>
+                <th scope="col">Age</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users$ | async; index as i">
+                <th scope="row">{{ i + 1 }}</th>
+                <td>
+                    <ngb-highlight [result]="user.name + ' ' + user.surname" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.age | number" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.email" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <ngb-highlight [result]="user.role" [term]="filter.value"></ngb-highlight>
+                </td>
+                <td>
+                    <button class="btn btn-success action-btn">Detalle</button>
+
+                    <button class="btn btn-danger action-btn">Cargar Detalle</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+          
+    </div>
+  </div>
+

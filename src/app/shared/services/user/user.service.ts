@@ -24,6 +24,8 @@ import { ToastrService } from 'ngx-toastr';
 import { splitNsName } from '@angular/compiler';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { Historia } from '../../interfaces/historia';
+
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +38,10 @@ export class UserService {
   currentUser: BehaviorSubject<any> = new BehaviorSubject('');
   verified: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
+  private itemsCollection!: AngularFirestoreCollection<Historia>;
+
   constructor(private auth: Auth, private firestore: AngularFirestore, private storage: AngularFireStorage, private firebaseAuth: AngularFireAuth, private http: HttpClient, private toastr: ToastrService, private router: Router) {
+    this.setItemsCollection();
     this.firebaseAuth.authState.subscribe((user) => {
       if (user) {
         this.userData = user;
@@ -51,6 +56,21 @@ export class UserService {
         localStorage.removeItem('user');
       }
     });
+  }
+
+  private setItemsCollection(){
+    this.itemsCollection = this.firestore.collection("historial");
+  }
+
+  savePoll(results: any, email: any)
+  {
+    console.log(results)
+    this.itemsCollection.doc(email).set(results).then(results1 => {console.log(results1)});
+  }
+
+  getHistorial(){
+    this.itemsCollection = this.firestore.collection<Historia>('historial');
+    return this.itemsCollection.valueChanges();
   }
 
   getUsers(): Observable<User[]> {

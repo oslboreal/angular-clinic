@@ -37,6 +37,10 @@ export class NavbarComponent implements OnInit, OnChanges {
     return this.userService.roleAs.getValue() == 'admin';
   }
 
+  isUserSpecialist() {
+    return this.userService.roleAs.getValue() == 'specialist';
+  }
+
   redirectToSignUp() {
     this.router.navigateByUrl('/signup');
   }
