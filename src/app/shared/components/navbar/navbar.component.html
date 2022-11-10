@@ -13,7 +13,7 @@
             <button *ngIf="(isUserLogged$ | async) && isUserAdmin()" style="text-decoration: none;" type="button"
                 class="btn" [ngClass]="isCurrentPath('/users')" (click)="redirectTo('/users')">Users</button>
 
-            <button *ngIf="(isUserLogged$ | async)" style="text-decoration: none;" type="button" class="btn"
+            <button *ngIf="(isUserLogged$ | async) && isUserSpecialist()" style="text-decoration: none;" type="button" class="btn"
                 (click)="redirectTo('/patients')" [ngClass]="isCurrentPath('/patients')">Patients</button>
 
             <button *ngIf="(isUserLogged$ | async)" style="text-decoration: none;" type="button" class="btn"
@@ -21,6 +21,9 @@
 
             <button *ngIf="(isUserLogged$ | async)" style="text-decoration: none;" type="button" class="btn"
                 (click)="redirectTo('/profile')" [ngClass]="isCurrentPath('/profile')">My Profile</button>
+
+            <button *ngIf="(isUserLogged$ | async)" style="text-decoration: none;" type="button" class="btn"
+                (click)="redirectTo('/historial')" [ngClass]="isCurrentPath('/historial')">Historial</button>
         </div>
         <div style="margin:1rem;" fxLayout="row" fxLayoutAlign="end center">
             <!-- Action buttons -->
