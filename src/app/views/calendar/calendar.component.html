@@ -188,84 +188,122 @@
     </app-dialog-template>
 </ng-template>
 
-
 <ng-template #createAppointment>
-    <app-dialog-template [title]="'Create'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('create')">
+    <app-dialog-template [title]="'Create appointment'" [isOkButtonEnabled]=" true" (okPressed)="onOkPressed('create')">
         <div>
             <!-- Select specialist -->
-            <form [formGroup]="addAppointmentForm">
+            <form [formGroup]="addAppointmentForm" style="width: 27rem;">
                 <br>
-                <label for="specialist">Specialist:</label>
-                <select class="custom-select" id="specialist" formControlName="specialist"
-                    aria-label="Select time from">
-                    <option selected>Choose specialist...</option>
-                    <option *ngFor="let specialist of specialists$ | async" [value]="specialist.email">
-                        {{specialist.email}}
-                    </option>
-                </select>
+                <ngb-accordion #acc="ngbAccordion">
+                    <ngb-panel title="Select specialist">
+                        <ng-template ngbPanelContent>
+                            <div style="border-radius: 4px; padding:1rem;"
+                                *ngFor="let specialist of specialists$ | async"
+                                [ngClass]="{'selected' : specialist.email == (selectedSpecialist | async)}"
+                                (click)="selectCard(specialist.email, 'specialist')">
+                                <img [src]="specialist.firstImage" style="width: 2rem;" alt="" srcset="">
+                                Name: {{specialist.name}} {{specialist.surname}}<br>
+                                Email: {{specialist.email}}
+                            </div>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
                 <br>
-                <!-- Select speciality -->
-                <label for="speciality">Speciality:</label>
-                <select class="custom-select" id="speciality" formControlName="speciality"
-                    aria-label="Select speciality">
-                    <option selected>Choose speciality...</option>
-                    <option *ngFor="let speciality of specialities$ | async" [value]="speciality">
-                        {{speciality}}
-                    </option>
-                </select>
+                <ngb-accordion #acc="ngbAccordion">
+                    <ngb-panel title="Select speciality">
+                        <ng-template ngbPanelContent>
+                            <div style="border-radius: 4px; padding:1rem;"
+                                *ngFor="let speciality of specialities$ | async"
+                                [ngClass]="{'selected' : speciality == (selectedSpecialty | async)}"
+                                (click)="selectCard(speciality, 'specialty')">
+                                <img [src]="getSpecialityImagePath(speciality)" style="width: 2rem;" alt="" srcset="">
+                                Name: {{speciality}}<br>
+                            </div>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
+                <br *ngIf="userRole == 'admin'">
+                <ngb-accordion #acc="ngbAccordion" *ngIf="userRole == 'admin'">
+                    <ngb-panel title="Select patient">
+                        <ng-template ngbPanelContent>
+                            <div style="border-radius: 4px; padding:1rem;" *ngFor="let patient of patients$ | async"
+                                [ngClass]="{'selected' : patient.email == (selectedPatient | async)}"
+                                (click)="selectCard(patient.email, 'patient')">
+                                <img [src]="patient.firstImage" style="width: 2rem;" alt="" srcset="">
+                                Name: {{patient.name}} {{patient.surname}}<br>
+                                Email: {{patient.email}}
+                            </div>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
                 <br>
-                <!-- Select Patient -->
-                <label for="patient">Patient:</label>
-                <select class="custom-select" id="patient" formControlName="patient" aria-label="Select patient">
-                    <option selected>Choose patient...</option>
-                    <option *ngFor="let patient of patients$ | async" [value]="patient.email">
-                        {{patient.email}}
-                    </option>
-                </select>
+                <ngb-accordion #acc="ngbAccordion">
+                    <ngb-panel title="Select date">
+                        <ng-template ngbPanelContent>
+                            <div style="border-radius: 4px; padding:1rem;" *ngFor="let date of createRange(15)"
+                                [ngClass]="{'selected' : date == (selectedDate | async)}"
+                                (click)="selectCard(date.toString(), 'date')">
+                                {{getFullDate(date)}}
+                            </div>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
                 <br>
-                <!-- <input type="text" name="speciality" class="form-control" formControlName="day" required> -->
-                <label for="days">Schedule appoitnment</label>
-                <select class="custom-select" id="days" formControlName="days" aria-label="Select patient">
-                    <option selected>Choose day...</option>
-                    <option *ngFor="let val of createRange(15)" [value]="val">
-                        {{getFullDate(val)}}
-                    </option>
-                </select>
-                <br>
-                <label for="from">Select time from</label>
-                <select class="custom-select" id="from" formControlName="from" aria-label="Select time from">
-                    <option selected>Choose from...</option>
-                    <option value="8">8:00</option>
-                    <option value="9">9:00</option>
-                    <option value="10">10:00</option>
-                    <option value="11">11:00</option>
-                    <option value="12">12:00</option>
-                    <option value="13">13:00</option>
-                    <option value="14">14:00</option>
-                    <option value="15">15:00</option>
-                    <option value="16">16:00</option>
-                    <option value="17">17:00</option>
-                    <option value="18">18:00</option>
-                    <option value="19">19:00</option>
-                </select>
+                <ngb-accordion #acc="ngbAccordion">
+                    <ngb-panel title="Select time from">
+                        <ng-template ngbPanelContent>
+                            <div style="border-radius: 4px; padding:1rem;" *ngFor="let date of createRange(11, 9)">
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeFrom | async)?.hours == date && (selectedTimeFrom | async)?.minutes == 0}"
+                                    [disabled]="isTimeFromSelected()"
+                                    (click)="selectTime(date, 00, 'from')">{{date}}:00</button>
 
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeFrom | async)?.hours == date && (selectedTimeFrom | async)?.minutes == 15}"
+                                    [disabled]=" isTimeFromSelected()"
+                                    (click)="selectTime(date,15, 'from')">{{date}}:15</button>
+
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeFrom | async)?.hours == date && (selectedTimeFrom | async)?.minutes == 30}"
+                                    [disabled]=" isTimeFromSelected()"
+                                    (click)="selectTime(date,30, 'from')">{{date}}:30</button>
+
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeFrom | async)?.hours == date && (selectedTimeFrom | async)?.minutes == 45}"
+                                    [disabled]=" isTimeFromSelected()"
+                                    (click)="selectTime(date,45, 'from')">{{date}}:45</button>
+                            </div>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
                 <br>
-                <label for="to">Select time to</label>
-                <select class="custom-select" id="inputGroupSelect03" formControlName="to" aria-label="Select time to">
-                    <option selected>Choose to...</option>
-                    <option value="8">8:00</option>
-                    <option value="9">9:00</option>
-                    <option value="10">10:00</option>
-                    <option value="11">11:00</option>
-                    <option value="12">12:00</option>
-                    <option value="13">13:00</option>
-                    <option value="14">14:00</option>
-                    <option value="15">15:00</option>
-                    <option value="16">16:00</option>
-                    <option value="17">17:00</option>
-                    <option value="18">18:00</option>
-                    <option value="19">19:00</option>
-                </select>
+                <ngb-accordion #acc="ngbAccordion">
+                    <ngb-panel title="Select time to">
+                        <ng-template ngbPanelContent>
+                            <div style="border-radius: 4px; padding:1rem;" *ngFor="let date of createRange(11, 9)">
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeTo | async)?.hours == date && (selectedTimeTo | async)?.minutes == 0}"
+                                    [disabled]="isTimeToSelected()"
+                                    (click)="selectTime(date, 00, 'to')">{{date}}:00</button>
+
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeTo | async)?.hours == date && (selectedTimeTo | async)?.minutes == 15}"
+                                    [disabled]="isTimeToSelected()"
+                                    (click)="selectTime(date,15, 'to')">{{date}}:15</button>
+
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeTo | async)?.hours == date && (selectedTimeTo | async)?.minutes == 30}"
+                                    [disabled]=" isTimeToSelected()"
+                                    (click)="selectTime(date,30, 'to')">{{date}}:30</button>
+
+                                <button
+                                    [ngClass]="{'selected' : (selectedTimeTo | async)?.hours == date && (selectedTimeTo | async)?.minutes == 45}"
+                                    [disabled]=" isTimeToSelected()"
+                                    (click)="selectTime(date,45, 'to')">{{date}}:45</button>
+                            </div>
+                        </ng-template>
+                    </ngb-panel>
+                </ngb-accordion>
             </form>
         </div>
     </app-dialog-template>

@@ -1,3 +1,4 @@
+import { Time } from '@angular/common';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -5,7 +6,7 @@ import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import { AppointmentStatus, IAppointment } from 'src/app/shared/services/calendar/appointment';
 import { CalendarService } from 'src/app/shared/services/calendar/calendar.service';
 import { DialogEventType, DialogService } from 'src/app/shared/services/dialog/dialog.service';
-import { User } from 'src/app/shared/services/user/user';
+import { SpecialtyImages, User } from 'src/app/shared/services/user/user';
 import { UserService } from 'src/app/shared/services/user/user.service';
 
 @Component({
@@ -14,11 +15,16 @@ import { UserService } from 'src/app/shared/services/user/user.service';
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit {
+  /* Component's state */
+  public selectedSpecialist: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  public selectedPatient: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  public selectedSpecialty: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  public selectedDate: BehaviorSubject<number> = new BehaviorSubject<number>(-1);
+  public selectedTimeFrom: BehaviorSubject<Time> = new BehaviorSubject<Time>({ hours: 0, minutes: 0 });
+  public selectedTimeTo: BehaviorSubject<Time> = new BehaviorSubject<Time>({ hours: 0, minutes: 0 });
   selected = 0;
   hovered = 0;
   readonly = false;
-
-  public appointments: Observable<IAppointment[]>;
   userRole: string
   currentActionAppointmentId: string = '';
   public currentAppointmentReview: string = '';
@@ -26,12 +32,13 @@ export class CalendarComponent implements OnInit {
   public currentAction: string = '';
   public currentAppointmentCalificationComment: string = '';
 
+  /* Collections */
+  public appointments: Observable<IAppointment[]>;
   public specialists$: Observable<User[]>;
   public patients$: Observable<User[]>;
   public specialities$: Observable<string[]>;
 
-  public availableDays$: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
-  public availableMonths$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+
 
   /* Form used to set a status to an appointment */
   statusForm = this.formBuilder.group({
@@ -74,17 +81,8 @@ export class CalendarComponent implements OnInit {
     this.patients$ = this.calendar.patients$.asObservable();
     this.specialities$ = this.calendar.specialities$.asObservable();
 
-    this.specialists$.subscribe(ext => {
-      console.log('Calendar - Got specialists');
-
-      console.log(ext);
-
-    })
-
     /* Filtering logic */
     this.filterForm.valueChanges.subscribe(ext => {
-
-      console.log(this.filterForm.controls);
 
       let isFilteringSpecialist = this.filterForm.controls.specialist.value != '';
       let isFilteringPatient = this.filterForm.controls.patient.value != '';
@@ -114,10 +112,63 @@ export class CalendarComponent implements OnInit {
     })
   }
 
-  public createRange(number: number) {
-    // return new Array(number);
+  public createRange(number: number, start: number = 0) {
     return new Array(number).fill(0)
-      .map((n, index) => index);
+      .map((n, index) => index + start);
+  }
+
+  selectCard(value: string, type: string) {
+    console.log('Specialist selected');
+    switch (type) {
+      case 'patient':
+        this.selectedPatient.next(value);
+        break;
+      case 'specialist':
+        this.selectedSpecialist.next(value);
+        break;
+      case 'specialty':
+        this.selectedSpecialty.next(value)
+        break;
+      case 'date':
+        this.selectedDate.next(Number(value))
+        break;
+    }
+  }
+
+  selectTime(hour: number, minute: number, type: string) {
+    switch (type) {
+      case 'from':
+        this.selectedTimeFrom.next({ hours: hour, minutes: minute })
+        break;
+      case 'to':
+        this.selectedTimeTo.next({ hours: hour, minutes: minute })
+        break;
+    }
+  }
+
+  isTimeFromSelected() {
+    return this.selectedTimeFrom.getValue().hours != 0;
+  }
+
+  isTimeToSelected() {
+    return this.selectedTimeTo.getValue().hours != 0;
+  }
+
+  getSpecialityImagePath(speciality: string) {
+    let lower = speciality.toLocaleLowerCase();
+    console.log('Getting speciality image:');
+    console.log(lower);
+
+    switch (speciality) {
+      case 'Kinesiologist':
+        return SpecialtyImages['Kinesiologist']
+      case 'Dentist':
+        return SpecialtyImages['Dentist']
+      case 'Oncologist':
+        return SpecialtyImages['Oncologist']
+      default:
+        return SpecialtyImages['Default']
+    }
   }
 
   public getMonth(number: number) {
@@ -133,10 +184,14 @@ export class CalendarComponent implements OnInit {
 
     let date = new Date();
     date.setDate((date.getDate() + number));
-    return `${date.getDate()}/${monthNames[date.getMonth()]}`;
+    return `${monthNames[date.getMonth()]} ${date.getDate()}`;
   }
 
   showActionForm(content: TemplateRef<any>, appointmentId: string, action: string, appointmentReview: string = '', calification: number | undefined = undefined, calificationComment: string = '') {
+    this.selectedTimeFrom.next({ hours: 0, minutes: 0 });
+    this.selectedTimeTo.next({ hours: 0, minutes: 0 });
+    this.selectedDate.next(0);
+
     if (calification != undefined) {
       this.currentAppointmentCalification = calification;
       this.selected = calification;
@@ -184,79 +239,115 @@ export class CalendarComponent implements OnInit {
       case 'create':
         console.log('Calendar - Creating appointment');
 
-        let days = this.addAppointmentForm.controls.days.value ?? 0;
-        let from = this.addAppointmentForm.controls.from.value;
-        let to = this.addAppointmentForm.controls.to.value;
-        let specialist = this.addAppointmentForm.controls.specialist.value;
-        let speciality = this.addAppointmentForm.controls.speciality.value;
-        let patient = this.addAppointmentForm.controls.patient.value;
+        let days = this.selectedDate.getValue();
+        let from = this.selectedTimeFrom.getValue();
+        let to = this.selectedTimeTo.getValue();
+        let specialist = this.selectedSpecialist.getValue();
+        let speciality = this.selectedSpecialty.getValue();
 
-        if (Number(to) <= Number(from)) {
-          this.toast.error('The selected time is invalid')
-        } else if (to == 0 && from == 0) {
-          this.toast.error('The selected time is invalid')
+        let patient;
+        if (this.userRole == 'admin')
+          patient = this.selectedPatient.getValue(); // Patient selected from UI.
+        else
+          patient = this.userService.currentUser.getValue().email;
+
+        let isFormReady = true;
+        if (days == 0) {
+          isFormReady = false;
+          this.toast.error('Please select a day for the appointment.')
         }
 
-        /* Datetime from */
-        let dateFrom = new Date();
-
-        /* Set day */
-        dateFrom.setDate(dateFrom.getDate() + days);
-
-        /* Datetime to */
-        let dateTo = new Date();
-        dateTo.setDate(dateTo.getDate() + days);
-        dateTo.setDate((dateTo.getDate()));
-
-        /* Set hours */
-        if (from && to) {
-          dateFrom.setHours(from)
-          dateTo.setHours(to)
+        if (from.hours == 0) {
+          isFormReady = false;
+          this.toast.error('Please select the time.')
         }
 
-        let specialistUser = this.userService.getUser(specialist ?? '');
-        let patientUser = this.userService.getUser(patient ?? '');
+        if (to.hours == 0) {
+          isFormReady = false;
+          this.toast.error('Please select the time.')
+        }
 
-        let obs$ = forkJoin(specialistUser, patientUser)
+        if (specialist == '') {
+          isFormReady = false;
+          this.toast.error('Please select a specialist')
+        }
 
-        obs$.subscribe(next => {
-          if (next != null) {
-            let specialistReceived = next[0];
-            let patientReceived = next[1];
+        if (speciality == '') {
+          isFormReady = false;
+          this.toast.error('Please select a speciality.')
+        }
 
-            // TODO : Validate specialist availability here
-            // specialistReceived?.timeAvailability.filter(x => )
-            let isSlotAvailable = true;
+        if (patient == '') {
+          isFormReady = false;
+          this.toast.error('Please select a patient.')
+        }
 
-            if (isSlotAvailable) {
-              // Create appointment
-              let appointment = {} as IAppointment;
-              appointment.id = this.calendar.getUniqueId(2);
-              appointment.status = AppointmentStatus.pending;
-              appointment.cancellationReason = "";
-              appointment.observation = "";
+        if (to.hours < from.hours) {
+          this.toast.error('The selected time is invalid')
+          isFormReady = false;
+        }
 
-              /* Dates */
-              appointment.dateFrom = dateFrom;
-              appointment.dateTo = dateTo;
+        if (isFormReady) {
+          /* Datetime from */
+          let dateFrom = new Date();
 
-              /* People implied */
-              appointment.patientEmail = patientReceived?.email ?? '';
-              appointment.patientName = patientReceived?.name + '' + patientReceived?.surname;
-              appointment.specialistEmail = specialist ?? '';
-              appointment.specialistName = specialistReceived?.name + '' + specialistReceived?.surname;
-              appointment.speciality = speciality ?? '';
+          /* Set day */
+          dateFrom.setDate(dateFrom.getDate() + days);
 
-              this.calendar.createAppointment(appointment)
-            } else {
-              this.toast.error('The specialist is not available at that time, please try with a different placeholder.');
-            }
+          /* Datetime to */
+          let dateTo = new Date();
+          dateTo.setDate(dateTo.getDate() + days);
+          dateTo.setDate((dateTo.getDate()));
+
+          /* Set hours */
+          if (from && to) {
+            dateFrom.setHours(from.hours)
+            dateFrom.setMinutes(from.minutes)
+            dateTo.setHours(to.hours)
+            dateTo.setMinutes(to.minutes)
           }
-        })
 
+          let specialistUser = this.userService.getUser(specialist ?? '');
+          let patientUser = this.userService.getUser(patient ?? '');
 
+          let obs$ = forkJoin(specialistUser, patientUser)
 
+          obs$.subscribe(next => {
+            if (next != null) {
+              let specialistReceived = next[0];
+              let patientReceived = next[1];
 
+              // TODO : Validate specialist availability here
+              // specialistReceived?.timeAvailability.filter(x => )
+              let isSlotAvailable = true;
+
+              if (isSlotAvailable) {
+                // Create appointment
+                let appointment = {} as IAppointment;
+                appointment.id = this.calendar.getUniqueId(2);
+                appointment.status = AppointmentStatus.pending;
+                appointment.cancellationReason = "";
+                appointment.observation = "";
+
+                /* Dates */
+                appointment.dateFrom = dateFrom;
+                appointment.dateTo = dateTo;
+
+                /* People implied */
+                appointment.patientEmail = patientReceived?.email ?? '';
+                appointment.patientName = patientReceived?.name + '' + patientReceived?.surname;
+                appointment.specialistEmail = specialist ?? '';
+                appointment.specialistName = specialistReceived?.name + '' + specialistReceived?.surname;
+                appointment.speciality = speciality ?? '';
+
+                this.calendar.createAppointment(appointment)
+              } else {
+                this.toast.error('The specialist is not available at that time, please try with a different placeholder.');
+              }
+            }
+          })
+
+        }
 
         break;
     }

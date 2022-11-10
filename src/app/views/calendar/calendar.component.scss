@@ -1,5 +1,9 @@
-#calendar-container{
+#calendar-container {
     margin-left: 9rem;
     margin-right: 9rem;
     margin-top: 5%;
+}
+
+.selected {
+    border: 1px solid red;
 }
