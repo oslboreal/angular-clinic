@@ -16,11 +16,10 @@ const routes: Routes = [
   { path: 'signup', component: SingUpComponent },
   { path: 'home', component: LandingPageComponent },
   { path: 'users', component: UsersComponent, canActivate: [AuthGuard, VerifiedEmailGuard] },
-  { path: 'patients', component: UnderConstructionComponent, canActivate: [VerifiedEmailGuard, SpecialistGuard]},
+  { path: 'patients', component: HistorialComponent, canActivate: [VerifiedEmailGuard, SpecialistGuard]},
   { path: 'calendar', component: CalendarComponent /*, canActivate: [VerifiedEmailGuard]*/ },
   { path: 'email-sent', component: VerificationEmailSentComponent },
   { path: 'profile', component: MyProfileComponent },
-  { path: 'historial', component: HistorialComponent },
   { path: '**', component: LandingPageComponent },
 ];
 
